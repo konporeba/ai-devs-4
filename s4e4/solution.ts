@@ -34,8 +34,8 @@ const CENTRAL_HUB_LINK = process.env.CENTRAL_HUB_LINK!;
 const NOTES_ZIP_URL = "https://hub.ag3nts.org/dane/natan_notes.zip";
 const TASK_NAME = "filesystem";
 
-// Modele do analizy — Claude Haiku jest dokładny i ekonomiczny
-const LLM_MODEL = "anthropic/claude-haiku-4-5";
+// Model — Sonnet zapewnia wyższą jakość ekstrakcji (mniej halucynacji w nazwach)
+const LLM_MODEL = "anthropic/claude-sonnet-4-5";
 
 // ─── Typy danych ──────────────────────────────────────────────────────────
 
@@ -200,26 +200,26 @@ function parseJson<T>(raw: string): T {
 async function extractCityNeeds(notes: Record<string, string>): Promise<City[]> {
   log("STEP 3a", "Ekstraktuję potrzeby miast...");
 
-  const system = `Jesteś ekspertem od ekstrakcji strukturyzowanych danych z polskich tekstów.
+  const system = `You are an expert at extracting structured data from Polish texts.
 
-ZADANIE: Przeanalizuj tekst ogłoszeń i wyodrębnij dla każdego miasta listę potrzebnych towarów z ilościami.
+TASK: Analyze the bulletin board text and extract for each city a list of needed goods with quantities.
 
-ZASADY:
-1. Nazwy miast - mianownik l.poj. (np. "Opalino", "Domatowo")
-2. USUŃ polskie znaki diakrytyczne ze WSZYSTKICH nazw (ą→a, ć→c, ę→e, ł→l, ń→n, ó→o, ś→s, ź→z, ż→z)
-3. Nazwy towarów - mianownik l.poj. (np. "chleb", "mlotek", "lopata")
-4. "woda" lub "butelka wody" → używaj klucza "woda"
-5. Ilości - tylko liczby całkowite, BEZ jednostek
-6. Odpowiedź WYŁĄCZNIE w formacie JSON
+RULES:
+1. City names - nominative singular (e.g. "Opalino", "Domatowo")
+2. REMOVE Polish diacritics from ALL names (ą→a, ć→c, ę→e, ł→l, ń→n, ó→o, ś→s, ź→z, ż→z)
+3. Good names - use the EXACT form from the source text, just remove diacritics and lowercase (preserve plural if plural is used, e.g. "mlotki" not "mlotek")
+4. "woda" or "butelka wody" → use key "woda"
+5. Quantities - integers only, NO units
+6. Respond ONLY with JSON
 
 FORMAT:
 {
   "cities": [
     {
-      "name": "NazwaMiasta",
+      "name": "CityName",
       "needs": {
-        "towar1": liczba,
-        "towar2": liczba
+        "good1": number,
+        "good2": number
       }
     }
   ]
@@ -242,42 +242,42 @@ FORMAT:
 async function extractPeople(notes: Record<string, string>): Promise<Person[]> {
   log("STEP 3b", "Ekstraktuję osoby odpowiedzialne za handel (1 per miasto)...");
 
-  const system = `Jesteś ekspertem od analizy polskich dzienników handlowych.
+  const system = `You are an expert at analyzing Polish trade journals.
 
-ZADANIE: Znajdź DOKŁADNIE JEDNĄ osobę odpowiedzialną za handel w każdym z 8 miast.
-Podaj PEŁNE imię i nazwisko każdej osoby.
+TASK: Find EXACTLY ONE person responsible for trade in each of the 8 cities.
+Provide the FULL name (first + last) of each person.
 
-WAŻNE ZASADY:
-1. Każde miasto ma JEDNĄ osobę zarządzającą handlem
-2. Podawaj PEŁNE imię i nazwisko (nie samo imię lub samo nazwisko)
-3. Natan używa czasem tylko imienia, czasem tylko nazwiska — połącz je w pełne imię+nazwisko
+IMPORTANT RULES:
+1. Each city has ONE person managing trade
+2. Always provide FULL name (not just first or last name alone)
+3. Natan sometimes uses only the first name, sometimes only the surname — combine them into full first+last name
 
-ANALIZA KAŻDEGO MIASTA (wymuś sobie te połączenia!):
-- Domatowo: Natan (narrator) = "Natan Rams" (jego pełne imię jest w tytule notatki)
-- Opalino: "z Opalina dzwonila Iga Kapecka" → pełne imię: "Iga Kapecka"
-- Brudzewo: UWAGA — to ta sama osoba:
-    * "Kisiel ma do mnie dzwonic w sprawie ryzu" (Kisiel = nazwisko, osoba zarządza Brudzewo)
-    * "Rafal oddzwonil wieczorem. Woda dla Brudzewa bedzie szybciej" (Rafal = imię tej samej osoby)
-    * Pełne imię: "Rafał Kisiel" (Rafał to imię, Kisiel to nazwisko)
-- Darzlubie: "Marta Frantz brzmiala jakby trzeci dzien nie spala" → pełne imię: "Marta Frantz"
-- Celbowo: "Oskar Radtke ma przeslac konkretne liczby" → pełne imię: "Oskar Radtke"
-- Mechowo: "Eliza Redmann dzwonila dwa razy" → pełne imię: "Eliza Redmann"
-- Puck: "z Pucka dzwonil Damian Kroll" → pełne imię: "Damian Kroll"
-- Karlinkowo: UWAGA — połącz dwa fragmenty:
-    * "krotki sygnal od Konkel" (Konkel = nazwisko, związane z Karlinkowo)
-    * "Teraz to Lena pilnuje tam handlu" (Lena = imię osoby zarządzającej Karlinkowo)
-    * Pełne imię: "Lena Konkel" (Lena to imię, Konkel to nazwisko)
+ANALYSIS FOR EACH CITY (force these connections):
+- Domatowo: Natan (the narrator) = "Natan Rams" (his full name appears in the note title)
+- Opalino: "z Opalina dzwonila Iga Kapecka" → full name: "Iga Kapecka"
+- Brudzewo: NOTE — these refer to the same person:
+    * "Kisiel ma do mnie dzwonic w sprawie ryzu" (Kisiel = surname, person manages Brudzewo)
+    * "Rafal oddzwonil wieczorem. Woda dla Brudzewa bedzie szybciej" (Rafal = first name of the same person)
+    * Full name: "Rafał Kisiel"
+- Darzlubie: "Marta Frantz brzmiala jakby trzeci dzien nie spala" → full name: "Marta Frantz"
+- Celbowo: "Oskar Radtke ma przeslac konkretne liczby" → full name: "Oskar Radtke"
+- Mechowo: "Eliza Redmann dzwonila dwa razy" → full name: "Eliza Redmann"
+- Puck: "z Pucka dzwonil Damian Kroll" → full name: "Damian Kroll"
+- Karlinkowo: NOTE — combine two fragments:
+    * "krotki sygnal od Konkel" (Konkel = surname, linked to Karlinkowo)
+    * "Teraz to Lena pilnuje tam handlu" (Lena = first name of the person managing Karlinkowo)
+    * Full name: "Lena Konkel"
 
-WYNIK: Dokładnie 8 osób z pełnymi imionami i nazwiskami.
-Imiona i nazwiska z polskimi znakami (np. "Rafał", "Łukasz").
-Odpowiedź WYŁĄCZNIE w formacie JSON.
+RESULT: Exactly 8 people with full names.
+Keep Polish characters in names (e.g. "Rafał", "Łukasz").
+Respond ONLY with JSON.
 
 FORMAT:
 {
   "people": [
     {
-      "fullName": "Imie Nazwisko",
-      "city": "NazwaMiasta"
+      "fullName": "First Last",
+      "city": "CityName"
     }
   ]
 }`;
@@ -299,30 +299,30 @@ FORMAT:
 async function extractGoods(notes: Record<string, string>): Promise<GoodEntry[]> {
   log("STEP 3c", "Ekstraktuję towary na sprzedaż (z transakcji)...");
 
-  const system = `Jesteś ekspertem od analizy list transakcji handlowych.
+  const system = `You are an expert at analyzing trade transaction lists.
 
-ZADANIE: Przeanalizuj listę transakcji i wyodrębnij wszystkie pary (towar, miasto_sprzedające).
+TASK: Analyze the transaction list and extract all (good, selling_city) pairs.
 
-FORMAT WEJŚCIA: "MiastoSprzedawca -> towar -> MiastoKupiec" lub "Sprzedawca → towar → Kupiec"
+INPUT FORMAT: "SellerCity -> good -> BuyerCity" or "Seller → good → Buyer"
 
-ZASADY:
-1. Interesuje nas SPRZEDAWCA (pierwsze miasto w każdej linii), NIE kupiec
-2. Nazwy towarów - mianownik l.poj. (np. "ryz" nie "ryzu", "ziemniak" nie "ziemniaki", "lopata" nie "lopaty")
-3. USUŃ polskie znaki: ą→a, ć→c, ę→e, ł→l, ń→n, ó→o, ś→s, ź→z, ż→z
-4. Ten sam towar może być sprzedawany przez wiele miast — uwzględnij WSZYSTKIE wystąpienia
-5. Nazwy miast też bez polskich znaków, mianownik
+RULES:
+1. We care about the SELLER (first city on each line), NOT the buyer
+2. Good names - nominative singular (e.g. "ryz" not "ryzu", "ziemniak" not "ziemniaki", "lopata" not "lopaty")
+3. REMOVE Polish diacritics: ą→a, ć→c, ę→e, ł→l, ń→n, ó→o, ś→s, ź→z, ż→z
+4. The same good can be sold by multiple cities — include ALL occurrences
+5. City names also without Polish diacritics, nominative
 
-Przykład transformacji:
+Transformation examples:
 - "Darzlubie -> ryż -> Puck" → {"name": "ryz", "offeredBy": "Darzlubie"}
 - "Brudzewo -> łopata -> Domatowo" → {"name": "lopata", "offeredBy": "Brudzewo"}
 - "Brudzewo -> mąka -> Karlinkowo" → {"name": "maka", "offeredBy": "Brudzewo"}
 
-Odpowiedź WYŁĄCZNIE w formacie JSON.
+Respond ONLY with JSON.
 
 FORMAT:
 {
   "goods": [
-    { "name": "nazwaTowaruMianownikLpoj", "offeredBy": "MiastoSprzedawca" }
+    { "name": "goodNameNominativeSingular", "offeredBy": "SellerCity" }
   ]
 }`;
 
@@ -519,12 +519,78 @@ async function previewStructure(): Promise<void> {
   }
 }
 
-// ─── KROK 6: Weryfikacja ──────────────────────────────────────────────────
+// ─── Korekcja na podstawie błędu weryfikacji ─────────────────────────────────
 
-async function verify(): Promise<void> {
+/**
+ * LLM analizuje błąd z API i produkuje minimalne akcje korekcyjne.
+ *
+ * Podajemy mu:
+ *   - treść błędu (kod, miasto, nieoczekiwane towary itp.)
+ *   - aktualne zawartości plików /miasta/* (z danych w pamięci)
+ *
+ * LLM zwraca tablicę akcji createFile, które nadpisują błędne pliki.
+ */
+async function correctFilesystem(
+  verifyError: unknown,
+  data: ExtractedData,
+  correctedState: Map<string, string>  // aktualny stan plików po poprzednich korektach
+): Promise<FileSystemAction[]> {
+  log("CORRECT", `Analyzing error: ${JSON.stringify(verifyError)}`);
+
+  // Odtwórz bazowy stan plików miast z danych w pamięci
+  const currentCityFiles: Record<string, string> = {};
+  for (const city of data.cities) {
+    const cityFile = toFileName(city.name);
+    const cleanNeeds: Record<string, number> = {};
+    for (const [good, qty] of Object.entries(city.needs)) {
+      cleanNeeds[toFileName(good)] = qty;
+    }
+    currentCityFiles[`/miasta/${cityFile}`] = JSON.stringify(cleanNeeds, null, 2);
+  }
+
+  // Nadpisz korektami z poprzednich iteracji — LLM widzi AKTUALNY stan API
+  for (const [path, content] of correctedState) {
+    currentCityFiles[path] = content;
+  }
+
+  const system = `You are a filesystem correction agent for a virtual trading data system.
+
+You receive a verification error from the central API and the current content of city files.
+Your task: produce the MINIMAL set of filesystem actions to fix the error.
+
+AVAILABLE ACTION:
+{"action": "createFile", "path": "/path", "content": "..."}
+(createFile overwrites an existing file)
+
+KNOWN ERROR CODES:
+- -807: A city file contains goods NOT listed as required by that city.
+  Fix: remove the keys listed in "unexpected_goods" from that city's JSON, then overwrite the file.
+
+Rules:
+- Only fix what the error explicitly reports. Do not modify other files.
+- The city file content must remain valid JSON (object with string keys and integer values).
+- Respond ONLY with a JSON array of correction actions (at least one element).`;
+
+  const userMsg = `Verification error from central API:
+${JSON.stringify(verifyError, null, 2)}
+
+Current city file contents (key = path, value = file content):
+${JSON.stringify(currentCityFiles, null, 2)}`;
+
+  const raw = await llmCall(system, userMsg);
+  const actions = parseJson<FileSystemAction[]>(raw);
+  log("CORRECT", `Proposed ${actions.length} correction(s):`);
+  actions.forEach((a) => log("CORRECT", `  ${a.action} ${a.path}`));
+  return actions;
+}
+
+// ─── KROK 6: Weryfikacja z pętlą korekcyjną ──────────────────────────────────
+
+async function verify(): Promise<unknown> {
   log("STEP 6", "Wysyłam 'done' do weryfikacji...");
   const result = await callAPI({ action: "done" });
   log("STEP 6", `Wynik: ${JSON.stringify(result, null, 2)}`);
+  return result;
 }
 
 // ─── Główny pipeline ──────────────────────────────────────────────────────
@@ -552,8 +618,28 @@ async function main() {
   // Podgląd
   await previewStructure();
 
-  // Krok 6: Weryfikuj
-  await verify();
+  // Krok 6: Weryfikuj z pętlą korekcyjną (max 3 próby)
+  const MAX_VERIFY_ATTEMPTS = 3;
+  const correctedState = new Map<string, string>();
+  for (let attempt = 1; attempt <= MAX_VERIFY_ATTEMPTS; attempt++) {
+    const verifyResult = await verify() as any;
+    if (verifyResult?.code === 0) break;
+
+    if (attempt < MAX_VERIFY_ATTEMPTS) {
+      log("CORRECT", `Attempt ${attempt}/${MAX_VERIFY_ATTEMPTS} failed — requesting LLM correction...`);
+      const corrections = await correctFilesystem(verifyResult, data, correctedState);
+      if (corrections.length > 0) {
+        const fixResult = await callAPI(corrections) as any;
+        log("CORRECT", `Fix applied: code=${fixResult?.code}, message=${fixResult?.message}`);
+        // Zapamiętaj zmiany, żeby kolejna iteracja widziała aktualny stan
+        for (const action of corrections) {
+          if (action.action === "createFile" && action.path && action.content !== undefined) {
+            correctedState.set(action.path, action.content);
+          }
+        }
+      }
+    }
+  }
 
   console.log("\n" + "=".repeat(60));
   console.log("Pipeline zakończony.");
