@@ -1,0 +1,21 @@
+{
+  "name": "electricity-puzzle-solver",
+  "version": "1.0.0",
+  "description": "AI Devs 4 S2E2 - Electricity Puzzle Solver using multi-agent vision analysis",
+  "main": "solution.ts",
+  "scripts": {
+    "start": "npx ts-node solution.ts",
+    "start:v2": "npx ts-node solution_v2.ts",
+    "start:v3": "npx ts-node solution_v3.ts",
+    "build": "npx tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "jimp": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,77 @@
+[2026-03-29T15:42:27.878Z] ============================================================
+[2026-03-29T15:42:27.882Z] AGENT SAVETHEM - START
+[2026-03-29T15:42:27.883Z] ============================================================
+[2026-03-29T15:42:27.884Z] 
+--- FAZA 1: Odkrywanie narzędzi ---
+[2026-03-29T15:42:27.884Z] [TOOLSEARCH] Szukam narzędzi: "map terrain grid movement rules"
+[2026-03-29T15:42:28.013Z] [TOOLSEARCH] Znaleziono 1 narzędzi: maps
+[2026-03-29T15:42:28.013Z] [TOOLSEARCH] Szukam narzędzi: "vehicles transportation fuel consumption"
+[2026-03-29T15:42:28.055Z] [TOOLSEARCH] Znaleziono 1 narzędzi: wehicles
+[2026-03-29T15:42:28.056Z] [TOOLSEARCH] Szukam narzędzi: "notes rules game mechanics"
+[2026-03-29T15:42:28.105Z] [TOOLSEARCH] Znaleziono 1 narzędzi: books
+[2026-03-29T15:42:28.106Z] 
+--- FAZA 2: Pobieranie mapy ---
+[2026-03-29T15:42:28.106Z] [MAPS] Pobieram mapę dla miasta: Skolwin
+[2026-03-29T15:42:28.176Z] [MAPS] Mapa pobrana pomyślnie (10x10)
+[2026-03-29T15:42:28.177Z] [MAP] Mapa Skolwin:
+[2026-03-29T15:42:28.178Z] [MAP] Row 0: . . . . . . . . W W
+[2026-03-29T15:42:28.178Z] [MAP] Row 1: . . . . . . . W W .
+[2026-03-29T15:42:28.179Z] [MAP] Row 2: . T . . . . W W . .
+[2026-03-29T15:42:28.179Z] [MAP] Row 3: . . . . . . W . . .
+[2026-03-29T15:42:28.179Z] [MAP] Row 4: . . T . . . W . G .
+[2026-03-29T15:42:28.180Z] [MAP] Row 5: . . . . R . W . . .
+[2026-03-29T15:42:28.180Z] [MAP] Row 6: . . . R R . W W . .
+[2026-03-29T15:42:28.181Z] [MAP] Row 7: S R . . . . . W . .
+[2026-03-29T15:42:28.181Z] [MAP] Row 8: . . . . . . W W . .
+[2026-03-29T15:42:28.182Z] [MAP] Row 9: . . . . . W W . . .
+[2026-03-29T15:42:28.182Z] 
+--- FAZA 3: Pobieranie danych pojazdów ---
+[2026-03-29T15:42:28.183Z] [VEHICLES] Pobieram dane pojazdu: rocket
+[2026-03-29T15:42:28.223Z] [VEHICLES] rocket: paliwo=1/ruch, jedzenie=0.1/ruch, może_wodę=false
+[2026-03-29T15:42:28.224Z] [VEHICLES] Pobieram dane pojazdu: car
+[2026-03-29T15:42:28.273Z] [VEHICLES] car: paliwo=0.7/ruch, jedzenie=1/ruch, może_wodę=false
+[2026-03-29T15:42:28.273Z] [VEHICLES] Pobieram dane pojazdu: horse
+[2026-03-29T15:42:28.372Z] [VEHICLES] horse: paliwo=0/ruch, jedzenie=1.6/ruch, może_wodę=true
+[2026-03-29T15:42:28.372Z] [VEHICLES] Pobieram dane pojazdu: walk
+[2026-03-29T15:42:28.415Z] [VEHICLES] walk: paliwo=0/ruch, jedzenie=2.5/ruch, może_wodę=true
+[2026-03-29T15:42:28.416Z] 
+--- FAZA 4: Planowanie optymalnej trasy ---
+[2026-03-29T15:42:28.417Z] [PATHFIND] Start: (7,0), Cel: (4,8)
+[2026-03-29T15:42:28.418Z] [PATHFIND] Planuję trasę...
+[2026-03-29T15:42:28.419Z] [PATHFIND] Zasoby: 10 jedzenia, 10 paliwa
+[2026-03-29T15:42:28.431Z] [PATHFIND] Znaleziono trasę! Kroki: 12, Iterations: 5089
+[2026-03-29T15:42:28.432Z] [PATHFIND] Zużycie: paliwo=8.2, jedzenie=8.3
+[2026-03-29T15:42:28.433Z] 
+[RESULT] Optymalna trasa:
+[2026-03-29T15:42:28.433Z] [RESULT] Pojazd startowy: rocket
+[2026-03-29T15:42:28.434Z] [RESULT] Komendy: up → up → up → right → right → right → right → right → dismount → right → right → right
+[2026-03-29T15:42:28.435Z] [RESULT] Liczba kroków: 11
+[2026-03-29T15:42:28.435Z] [PATHFIND] Start: (7,0), Cel: (4,8)
+[2026-03-29T15:42:28.436Z] 
+[SIM] Symulacja trasy:
+[2026-03-29T15:42:28.437Z] [SIM] Start: (7,0), pojazd=rocket, paliwo=10, jedzenie=10
+[2026-03-29T15:42:28.437Z] [SIM] Krok 1: up → (6,0)=., -paliwo=1.0, -jedzenie=0.1 | zostało: paliwo=9.0, jedzenie=9.9
+[2026-03-29T15:42:28.438Z] [SIM] Krok 2: up → (5,0)=., -paliwo=1.0, -jedzenie=0.1 | zostało: paliwo=8.0, jedzenie=9.8
+[2026-03-29T15:42:28.439Z] [SIM] Krok 3: up → (4,0)=., -paliwo=1.0, -jedzenie=0.1 | zostało: paliwo=7.0, jedzenie=9.7
+[2026-03-29T15:42:28.439Z] [SIM] Krok 4: right → (4,1)=., -paliwo=1.0, -jedzenie=0.1 | zostało: paliwo=6.0, jedzenie=9.6
+[2026-03-29T15:42:28.440Z] [SIM] Krok 5: right → (4,2)=T, -paliwo=1.2, -jedzenie=0.1 | zostało: paliwo=4.8, jedzenie=9.5
+[2026-03-29T15:42:28.441Z] [SIM] Krok 6: right → (4,3)=., -paliwo=1.0, -jedzenie=0.1 | zostało: paliwo=3.8, jedzenie=9.4
+[2026-03-29T15:42:28.441Z] [SIM] Krok 7: right → (4,4)=., -paliwo=1.0, -jedzenie=0.1 | zostało: paliwo=2.8, jedzenie=9.3
+[2026-03-29T15:42:28.442Z] [SIM] Krok 8: right → (4,5)=., -paliwo=1.0, -jedzenie=0.1 | zostało: paliwo=1.8, jedzenie=9.2
+[2026-03-29T15:42:28.442Z] [SIM] Krok 9: DISMOUNT → teraz idę pieszo @ (4,5)
+[2026-03-29T15:42:28.443Z] [SIM] Krok 10: right → (4,6)=W, -paliwo=0.0, -jedzenie=2.5 | zostało: paliwo=1.8, jedzenie=6.7
+[2026-03-29T15:42:28.444Z] [SIM] Krok 11: right → (4,7)=., -paliwo=0.0, -jedzenie=2.5 | zostało: paliwo=1.8, jedzenie=4.2
+[2026-03-29T15:42:28.444Z] [SIM] Krok 12: right → (4,8)=G, -paliwo=0.0, -jedzenie=2.5 | zostało: paliwo=1.8, jedzenie=1.7
+[2026-03-29T15:42:28.445Z] [SIM] Koniec symulacji: pozycja=(4,8), paliwo_pozostałe=1.8, jedzenie_pozostałe=1.7
+[2026-03-29T15:42:28.450Z] [SIM] ✓ Zasoby wystarczające!
+[2026-03-29T15:42:28.451Z] 
+--- FAZA 5: Wysyłanie odpowiedzi ---
+[2026-03-29T15:42:28.454Z] [VERIFY] Wysyłam trasę: ["rocket","up","up","up","right","right","right","right","right","dismount","right","right","right"]
+[2026-03-29T15:42:28.527Z] [VERIFY] Odpowiedź serwera: code=0, message="{FLG:INTACTCITY}"
+[2026-03-29T15:42:28.529Z] 
+[SUCCESS] ✓ Zadanie ukończone pomyślnie!
+[2026-03-29T15:42:28.530Z] [SUCCESS] 🏆 FLAGA: {FLG:INTACTCITY}
+[2026-03-29T15:42:28.531Z] 
+============================================================
+[2026-03-29T15:42:28.532Z] AGENT SAVETHEM - KONIEC
+[2026-03-29T15:42:28.533Z] ============================================================

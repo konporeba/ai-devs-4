@@ -1,0 +1,19 @@
+{
+  "name": "s2e4-mailbox-agent",
+  "version": "1.0.0",
+  "description": "AI Devs 4 S02E04 - Mailbox search agent using agentic loop with function calling",
+  "main": "agent.ts",
+  "scripts": {
+    "start": "npx tsx agent.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

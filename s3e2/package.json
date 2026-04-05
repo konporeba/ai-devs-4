@@ -1,0 +1,16 @@
+{
+  "name": "s3e2-firmware-agent",
+  "version": "1.0.0",
+  "description": "AI agent for AI Devs 4 S3E2 firmware task",
+  "scripts": {
+    "start": "ts-node agent.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
