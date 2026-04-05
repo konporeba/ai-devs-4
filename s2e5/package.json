@@ -1,0 +1,19 @@
+{
+  "name": "ai-devs-s2e5-drone",
+  "version": "1.0.0",
+  "description": "AI Devs 4 - S2E5: Drone Mission Agent",
+  "main": "solution.ts",
+  "scripts": {
+    "start": "ts-node solution.ts",
+    "build": "tsc",
+    "start:built": "node dist/solution.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

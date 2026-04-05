@@ -1,0 +1,19 @@
+{
+  "name": "windpower-agent",
+  "version": "1.0.0",
+  "description": "AI Devs 4 - S4E2 Windpower task: LLM agent that schedules a wind turbine",
+  "main": "solution.ts",
+  "scripts": {
+    "start": "ts-node solution.ts",
+    "start:v2": "ts-node solution_v2.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.68.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

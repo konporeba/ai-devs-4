@@ -1,0 +1,21 @@
+{
+  "name": "s2e1ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node --project tsconfig.json src/categorize.ts",
+    "build": "tsc",
+    "run:built": "node dist/categorize.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^25.5.0",
+    "dotenv": "^17.3.1",
+    "openai": "^6.32.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

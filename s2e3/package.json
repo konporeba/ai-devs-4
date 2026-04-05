@@ -1,0 +1,21 @@
+{
+  "name": "s2e3-failure-log-analyzer",
+  "version": "1.0.0",
+  "description": "AI Devs 4 - S2E3: Power plant failure log analysis agent",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "domatowo-rescue",
+  "version": "1.0.0",
+  "description": "AI-powered evacuation operation in Domatowo — S04E03",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "npx ts-node src/index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

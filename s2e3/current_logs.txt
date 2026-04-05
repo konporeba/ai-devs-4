@@ -1,0 +1,15 @@
+[2026-03-21 06:04] [CRIT] ECCS8 reported runaway outlet temperature. Protection interlock initiated reactor trip.
+[2026-03-21 06:16] [CRIT] WSTPOOL2 absorption path reached emergency boundary. Heat rejection is no longer sufficient.
+[2026-03-21 08:00] [CRIT] ECCS8 core cooling cannot maintain safe gradient. Immediate protective actions are required.
+[2026-03-21 10:15] [CRIT] WTANK07 coolant level is below critical threshold. Shutdown logic is moving to hard trip stage.
+[2026-03-21 11:01] [CRIT] WTRPMP lost stable prime under peak thermal demand. Core loop continuity is compromised.
+[2026-03-21 12:51] [CRIT] FIRMWARE entered emergency guard branch after repeated safety faults. Manual override is locked.
+[2026-03-21 12:56] [CRIT] STMTURB12 decoupling sequence forced by thermal risk. Energy conversion is terminated.
+[2026-03-21 13:37] [CRIT] PWR01 can no longer sustain stable feed for cooling auxiliaries. Critical loads are shedding.
+[2026-03-21 14:52] [CRIT] Safety bootstrap read missing environment marker SAFETY_CHECK=pass. FIRMWARE continues in restricted validation mode.
+[2026-03-21 16:06] [CRIT] WSTPOOL2 entered critical protection state during startup. Immediate shutdown safeguards remain active.
+[2026-03-21 19:54] [CRIT] ECCS8 cannot remove heat with the current WTANK07 volume. Reactor protection initiates critical stop.
+[2026-03-21 20:05] [CRIT] Critical boundary exceeded on ECCS8. Emergency interlock keeps the reactor in protected mode.
+[2026-03-21 20:32] [CRIT] Coolant inventory in WTANK07 is below critical threshold for full-loop operation. ECCS8 cannot guarantee reactor heat removal and automatic shutdown is mandatory.
+[2026-03-21 20:59] [CRIT] Insufficient cooling capacity confirmed after incomplete WTANK07 refill. Reactor protection system executes final shutdown sequence.
+[2026-03-21 21:37] [CRIT] Final trip complete because WTANK07 remained under critical water level. FIRMWARE confirms safe shutdown state with all core operations halted.

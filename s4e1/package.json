@@ -1,0 +1,22 @@
+{
+  "name": "oko-editor-agent",
+  "version": "1.0.0",
+  "description": "AI Devs 4 S04E01 - OKO Editor Agent using ReAct pattern",
+  "main": "dist/agent.js",
+  "scripts": {
+    "start": "ts-node agent.ts",
+    "build": "tsc",
+    "dev": "ts-node --transpile-only agent.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

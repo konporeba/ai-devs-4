@@ -1,0 +1,21 @@
+{
+  "name": "s4e4-filesystem-agent",
+  "version": "1.0.0",
+  "description": "AI Agent for organizing Natan's notes into a virtual filesystem",
+  "main": "solution.ts",
+  "scripts": {
+    "start": "tsx solution.ts",
+    "dev": "tsx --watch solution.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "jszip": "^3.10.1",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "type": "module"
+}
