@@ -1,0 +1,14 @@
+{
+  "name": "s4e5-foodwarehouse-agent",
+  "version": "1.0.0",
+  "description": "Autonomous warehouse ordering agent for AI Devs 4 course - S4E5",
+  "type": "module",
+  "scripts": {
+    "start": "node --experimental-strip-types src/agent.ts",
+    "dev": "node --watch --experimental-strip-types src/agent.ts"
+  },
+  "dependencies": {
+    "openai": "^4.78.1",
+    "dotenv": "^16.4.5"
+  }
+}

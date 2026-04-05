@@ -1,71 +1,204 @@
-## Zadanie
+# Zadanie praktyczne
 
-Masz do rozwiązania puzzle elektryczne na planszy 3x3 - musisz doprowadzić prąd do wszystkich trzech elektrowni (PWR6132PL, PWR1593PL, PWR7264PL), łącząc je odpowiednio ze źródłem zasilania awaryjnego (po lewej na dole). Plansza przedstawia sieć kabli - każde pole zawiera element złącza elektrycznego. Twoim celem jest doprowadzenie prądu do wszystkich elektrowni przez obrócenie odpowiednich pól planszy tak, aby układ kabli odpowiadał podanemu schematowi docelowemu. Źródłową elektrownią jest ta w lewym-dolnym rogu mapy. Okablowanie musi stanowić obwód zamknięty.
+Musisz uporządkować pracę magazynu żywności i narzędzi tak, aby przygotować zamówienia, które zaspokoją potrzeby wszystkich wskazanych miast. Do dyspozycji dostajesz gotowe API magazynu, generator podpisów bezpieczeństwa oraz dostęp tylko do odczytu do bazy danych, z której trzeba wyciągnąć dane potrzebne do autoryzacji zamówienia.
 
-Jedyna dozwolona operacja to obrót wybranego pola o 90 stopni w prawo. Możesz obracać wiele pól, ile chcesz - ale za każdy obrót płacisz jednym zapytaniem do API.
+To zadanie nie polega na zgadywaniu. Najpierw poznaj strukturę danych, później ustal pełne zapotrzebowanie miast, a na końcu zbuduj jedno zamówienie, którego zawartość będzie zgodna z wymaganiami Centrali.
 
-**Nazwa zadania: electricity**
+- **Nazwa zadania:** `foodwarehouse`
+- **Odpowiedź wysyłasz do:** `https://hub.ag3nts.org/verify`
+- **Plik z zapotrzebowaniem miast:** `https://hub.ag3nts.org/dane/food4cities.json`
 
-### Jak wygląda plansza?
+---
 
-Aktualny stan planszy pobierasz jako obrazek PNG:
+## Baza danych SQLite
 
-```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png
-```
+W tym zadaniu rozmawiasz także z bazą danych SQLite. Dostęp do niej jest wyłącznie w trybie odczytu.
 
-Pola adresujesz w formacie AxB, gdzie A to wiersz (1-3, od góry), a B to kolumna (1-3, od lewej):
+Na początek najlepiej pobrać pomoc API:
 
-```
-1x1 | 1x2 | 1x3
-----|-----|----
-2x1 | 2x2 | 2x3
-----|-----|----
-3x1 | 3x2 | 3x3
-```
-
-### Jak wygląda rozwiązanie?
-
-<https://hub.ag3nts.org/i/solved_electricity.png>
-
-### Jak komunikować się z hubem?
-
-Każde zapytanie to POST na https://hub.ag3nts.org/verify:
-
-```
+```json
 {
-  "apikey": "tutaj-twój-klucz",
-  "task": "electricity",
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
   "answer": {
-    "rotate": "2x3"
+    "tool": "help"
   }
 }
 ```
 
-Jedno zapytanie = jeden obrót jednego pola. Jeśli chcesz obrócić 3 pola, wysyłasz 3 osobne zapytania.
+---
 
-Gdy plansza osiągnie poprawną konfigurację, hub zwróci flagę {FLG:...}.
+## Jak działa API
 
-### Reset planszy
+Każde wywołanie wysyłasz do `/verify` w polu `answer` jako obiekt z polem `tool`.
 
-Jeśli chcesz zacząć od początku, wywołaj GET z parametrem reset:
+Najważniejsze narzędzia:
 
+| Narzędzie            | Opis                                                                   |
+| -------------------- | ---------------------------------------------------------------------- |
+| `orders`             | Odczyt, tworzenie, uzupełnianie i usuwanie zamówień                    |
+| `signatureGenerator` | Generowanie podpisu SHA1 na podstawie danych użytkownika z bazy SQLite |
+| `database`           | Odczyt danych i schematów z bazy SQLite                                |
+| `reset`              | Przywrócenie początkowego stanu zamówień                               |
+| `done`               | Końcowa weryfikacja rozwiązania                                        |
+
+---
+
+## Reset
+
+Jeśli po drodze namieszasz w stanie zadania, użyj `reset`:
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "reset"
+  }
+}
 ```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png?reset=1
+
+---
+
+## Praca z zamówieniami
+
+### Pobranie listy zamówień
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "orders",
+    "action": "get"
+  }
+}
 ```
 
-### Co należy zrobić w zadaniu?
+### Tworzenie nowego zamówienia
 
-1. **Odczytaj aktualny stan** - pobierz obrazek PNG i ustal, jak ułożone są kable na każdym z 9 pól.
-2. **Porównaj ze stanem docelowym** - ustal, które pola różnią się od wyglądu docelowego i ile obrotów (po 90 stopni w prawo) każde z nich potrzebuje.
-3. **Wyślij obroty** - dla każdego pola wymagającego zmiany wyślij odpowiednią liczbę zapytań z polem rotate.
-4. **Sprawdź wynik** - jeśli trzeba, pobierz zaktualizowany obrazek i zweryfikuj, czy plansza zgadza się ze schematem.
-5. **Odbierz flagę** - gdy konfiguracja jest poprawna, hub zwraca {FLG:...}.
+Nowe zamówienie tworzysz dopiero wtedy, gdy znasz już tytuł, `creatorID`, kod `destination` oraz poprawny podpis:
 
-### Wskazówki
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "orders",
+    "action": "create",
+    "title": "Dostawa dla Torunia",
+    "creatorID": 2,
+    "destination": "1234",
+    "signature": "tutaj-podpis-sha1"
+  }
+}
+```
 
-- **LLM nie widzi obrazka** - stan planszy to plik PNG, ale agentowi trzeba podać go w takiej formie, żeby mógł nad nim rozumować. Zastanów się: w jaki sposób można opisać wygląd każdego pola słowami lub symbolami? Jak przekazać te informacje modelowi tekstowo, żeby mógł zaplanować obroty? Można próbować wysyłać obrazek bezpośrednio do modelu z możliwościami przetwarzania obrazów (vision), natomiast czy opłaca się to robić w głównej pętli agenta? Warto opisanie obrazka wydelegować do odpowiedniego narzędzia lub subagenta.
-- **Problemy modeli Vision** - nie wszystkie modele vision będą dobrze radziły sobie z tym zadaniem. Przetestuj które modele zwracają najlepsze wyniki. Może warto odpowiednio przygotować obraz zanim zostanie wysłany do modelu? Czy musi być wysłany w całości? Jeden z lepszych modeli do użycia to google/gemini-3-flash-preview.
-- **Mechanika obrotów** - każdy obrót to 90 stopni w prawo. Żeby obrócić pole "w lewo" (90 stopni w lewo), wykonaj 3 obroty w prawo. Kable na każdym polu mogą wychodzić przez różną kombinację krawędzi (lewo, prawo, góra, dół) - obrót przesuwa je zgodnie z ruchem wskazówek zegara.
-- **Podejście agentowe** - to zadanie szczególnie dobrze nadaje się do rozwiązania przez agenta z Function Calling. Agent może samodzielnie: odczytać i zinterpretować stan mapy, porównać z celem, wyliczyć potrzebne obroty i wysłać je sekwencyjnie - bez sztywnego kodowania kolejności w kodzie.
-- **Weryfikuj po każdej partii obrotów** - po wykonaniu kilku obrotów możesz pobrać świeży obrazek i sprawdzić, czy aktualny stan zgadza się ze schematem. Błędy w interpretacji obrazu mogą skutkować niepotrzebnymi obrotami lub koniecznością resetu.
+### Dopisywanie towarów — pojedynczo
+
+Po utworzeniu zamówienia możesz dopisywać towary pojedynczo:
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "orders",
+    "action": "append",
+    "id": "tutaj-id-zamowienia",
+    "name": "woda",
+    "items": 120
+  }
+}
+```
+
+### Dopisywanie towarów — batch mode
+
+Możesz też użyć batch mode i dopisać wiele pozycji naraz. To ważne, bo `orders.append` przyjmuje również obiekt z wieloma towarami:
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "orders",
+    "action": "append",
+    "id": "tutaj-id-zamowienia",
+    "items": {
+      "chleb": 45,
+      "woda": 120,
+      "mlotek": 6
+    }
+  }
+}
+```
+
+> **Uwaga:** Jeżeli dopiszesz do zamówienia towar, który już w nim istnieje, system zwiększy jego ilość zamiast tworzyć duplikat.
+
+---
+
+## Odczyt bazy SQLite
+
+### Wyświetlenie tabel
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "database",
+    "query": "show tables"
+  }
+}
+```
+
+### Zapytania SELECT
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "database",
+    "query": "select * from tabela"
+  }
+}
+```
+
+---
+
+## Co musisz zrobić
+
+1. Ustal, które miasta biorą udział w operacji na podstawie pliku `food4cities.json`
+2. Znajdź odpowiednie wartości dla pola `destination` dla tych miast
+3. Odczytaj z `food4cities.json`, jakie towary i ilości są potrzebne w każdym z tych miast
+4. Przygotuj osobne zamówienie dla każdego wymaganego miasta
+5. Każde zamówienie utwórz z poprawnym `creatorID`, `destination` i podpisem wygenerowanym na podstawie danych z bazy SQLite
+6. Uzupełnij zamówienia dokładnie tymi towarami, których potrzebują miasta — bez braków i bez nadmiarów
+7. Gdy wszystko będzie gotowe, wywołaj narzędzie `done`
+
+---
+
+## Dodatkowe uwagi
+
+- Musisz utworzyć tyle zamówień, ile mamy miast w pliku JSON
+- Jeśli coś zepsujesz po drodze, użyj `reset`, żeby wrócić do stanu początkowego
+- Każde zamówienie musi mieć poprawny `creatorID` oraz `signature`
+
+---
+
+## Finalne sprawdzenie
+
+Gdy uznasz, że wszystkie wymagane zamówienia są gotowe, wyślij finalne sprawdzenie:
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "foodwarehouse",
+  "answer": {
+    "tool": "done"
+  }
+}
+```
+
+Jeśli komplet zamówień będzie zgodny z potrzebami miast, trafi pod właściwe kody docelowe i zachowa poprawne podpisy, Centrala odeśle flagę.
