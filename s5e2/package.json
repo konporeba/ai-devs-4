@@ -1,0 +1,23 @@
+{
+  "name": "s5e2-phonecall-agent",
+  "version": "1.0.0",
+  "description": "AI Devs 4 S05E02 - Phonecall Agent conducting a scripted audio conversation",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "dev": "ts-node --esm src/index.ts"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.4.0",
+    "google-tts-api": "^2.0.2",
+    "openai": "^4.28.0",
+    "form-data": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
