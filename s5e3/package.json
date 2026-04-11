@@ -1,0 +1,19 @@
+{
+  "name": "s5e3-shellaccess-agent",
+  "version": "1.0.0",
+  "description": "ReAct agent that explores a remote Linux server via shell commands to find Rafał",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}
