@@ -1,0 +1,20 @@
+{
+  "name": "s5e4-goingthere-agent",
+  "version": "1.0.0",
+  "description": "Multi-agent rocket navigation system for AI Devs 4 s5e4 - navigates a 3x12 grid avoiding rocks and OKO radar traps",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.5",
+    "openai": "^4.77.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

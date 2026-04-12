@@ -1,71 +1,115 @@
-## Zadanie
+# Zadanie praktyczne
 
-Masz do rozwiązania puzzle elektryczne na planszy 3x3 - musisz doprowadzić prąd do wszystkich trzech elektrowni (PWR6132PL, PWR1593PL, PWR7264PL), łącząc je odpowiednio ze źródłem zasilania awaryjnego (po lewej na dole). Plansza przedstawia sieć kabli - każde pole zawiera element złącza elektrycznego. Twoim celem jest doprowadzenie prądu do wszystkich elektrowni przez obrócenie odpowiednich pól planszy tak, aby układ kabli odpowiadał podanemu schematowi docelowemu. Źródłową elektrownią jest ta w lewym-dolnym rogu mapy. Okablowanie musi stanowić obwód zamknięty.
+Wyruszasz rakietą naziemną w kierunku Grudziądza. Problem polega na tym, że systemy zakłócające nawigację na całej trasie sprawiają, że nie wiesz, co znajduje się przed tobą — możesz więc uderzyć w skałę. Jedyne, co możesz zrobić, to nasłuchiwać komunikatów radiowych opisujących położenie skał tuż przed Tobą.
 
-Jedyna dozwolona operacja to obrót wybranego pola o 90 stopni w prawo. Możesz obracać wiele pól, ile chcesz - ale za każdy obrót płacisz jednym zapytaniem do API.
+Pamiętaj, że system **OKO** cały czas namierza każdy, nawet najdrobniejszy ruch, jaki wykonujemy na tych odludnych terenach. Jeśli system namierzania wykryje Cię, to wystrzeli pocisk, który zakończy Twoje życie. Mamy jednak dostęp do API, które umożliwia wykrycie, kiedy jesteś namierzany, oraz potrafi zneutralizować sygnał radarowy, dzięki czemu będziesz niewidoczny dla systemu OKO. Musisz jedynie sprawdzać w API przed wykonaniem każdego ruchu, czy znajdujesz się akurat koło radaru i jeśli tak, musisz przeprowadzić procedurę jego deaktywacji.
 
-**Nazwa zadania: electricity**
+> **Uwaga:** mechanizmy zagłuszające stosowane przez system OKO mają podwójne działanie. Po pierwsze, dane odbierane ze skanera częstotliwości są bardzo często zniekształcone, czy nawet zepsute. Po drugie, API może losowo zwracać błędy, nawet jeśli Twoje zapytanie jest poprawne. Twój kod musi być odporny zarówno na uszkodzone pakiety danych, jak i na losowe błędy API — w razie błędu po prostu ponów zapytanie.
 
-### Jak wygląda plansza?
+**Nazwa zadania:** `goingthere`
 
-Aktualny stan planszy pobierasz jako obrazek PNG:
+**Odpowiedź wysyłasz do:** <https://hub.ag3nts.org/verify>
 
-```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png
-```
+**Podgląd trasy i stanu gry:** <https://hub.ag3nts.org/goingthere_preview>
 
-Pola adresujesz w formacie AxB, gdzie A to wiersz (1-3, od góry), a B to kolumna (1-3, od lewej):
+## Sterowanie rakietą
 
-```
-1x1 | 1x2 | 1x3
-----|-----|----
-2x1 | 2x2 | 2x3
-----|-----|----
-3x1 | 3x2 | 3x3
-```
+Rakieta porusza się po siatce o wymiarach **3 wiersze na 12 kolumn**. Start jest zawsze w kolumnie 1, w środkowym wierszu (wiersz 2). Baza w Grudziądzu znajduje się w kolumnie 12, w wierszu podanym na starcie. W każdej kolumnie znajduje się dokładnie jedna skała.
 
-### Jak wygląda rozwiązanie?
+Masz do dyspozycji trzy komendy ruchu i jedną komendę startową:
 
-<https://hub.ag3nts.org/i/solved_electricity.png>
+- **`start`** — rozpoczyna nową grę, generuje nową mapę i resetuje wszystkie ustawienia.
+- **`go`** — leci prosto do przodu (ta sama pozycja w wierszu, następna kolumna).
+- **`left`** — idzie na wyższy wiersz i do przodu (góra + następna kolumna).
+- **`right`** — idzie na niższy wiersz i do przodu (dół + następna kolumna).
 
-### Jak komunikować się z hubem?
+Każdy ruch przesuwa rakietę o jedną kolumnę do przodu (także `left` i `right`!). Jeśli trafisz w skałę, rakieta rozbija się i musisz zacząć od nowa. Jeśli wypadniesz poza mapę, to także się rozbijasz. Jeśli nie zneutralizujesz systemu radarów, zostaniesz zestrzelony.
 
-Każde zapytanie to POST na https://hub.ag3nts.org/verify:
+### Rozpocznij grę
 
-```
+```json
 {
-  "apikey": "tutaj-twój-klucz",
-  "task": "electricity",
+  "apikey": "tutaj-twoj-klucz",
+  "task": "goingthere",
   "answer": {
-    "rotate": "2x3"
+    "command": "start"
   }
 }
 ```
 
-Jedno zapytanie = jeden obrót jednego pola. Jeśli chcesz obrócić 3 pola, wysyłasz 3 osobne zapytania.
+Po starcie otrzymasz informację o swojej pozycji, pozycji bazy docelowej oraz opis bieżącej kolumny (wolne wiersze i pozycja skały). Możesz wykonać bezpieczny ruch — przykładowo:
 
-Gdy plansza osiągnie poprawną konfigurację, hub zwróci flagę {FLG:...}.
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "goingthere",
+  "answer": {
+    "command": "go"
+  }
+}
+```
 
-### Reset planszy
+## Radiowe wskazówki o skałach
 
-Jeśli chcesz zacząć od początku, wywołaj GET z parametrem reset:
+Ponieważ nie widzisz trasy przed sobą, możesz poprosić o radiową wskazówkę.
+
+**Endpoint:** <https://hub.ag3nts.org/api/getmessage>
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz"
+}
+```
+
+W odpowiedzi otrzymasz pole `"hint"` z komunikatem w języku angielskim. Komunikat opisuje, po której stronie (lewa/prawa/przód) względem rakiety znajduje się skała w następnej kolumnie. Na tej podstawie musisz zdecydować, którą komendę ruchu wysłać, aby nie trafić w skałę. Komunikaty radiowe czasami bywają dziwne i używają języka stosowanego w żegludze.
+
+## Skaner częstotliwości i skanery systemu OKO
+
+Na trasie rozmieszczone są skanery systemu OKO — nie wiesz, gdzie się znajdują. Jeśli rakieta znajduje się w kolumnie z aktywną pułapką i spróbujesz wykonać ruch bez jej zneutralizowania, rakieta zostanie zestrzelona.
+
+Aby sprawdzić, czy jesteś namierzany, odpytaj skaner częstotliwości metodą **GET**:
 
 ```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png?reset=1
+https://hub.ag3nts.org/api/frequencyScanner?key=tutaj-twoj-klucz
 ```
 
-### Co należy zrobić w zadaniu?
+Skaner zwróci jedną z dwóch odpowiedzi:
 
-1. **Odczytaj aktualny stan** - pobierz obrazek PNG i ustal, jak ułożone są kable na każdym z 9 pól.
-2. **Porównaj ze stanem docelowym** - ustal, które pola różnią się od wyglądu docelowego i ile obrotów (po 90 stopni w prawo) każde z nich potrzebuje.
-3. **Wyślij obroty** - dla każdego pola wymagającego zmiany wyślij odpowiednią liczbę zapytań z polem rotate.
-4. **Sprawdź wynik** - jeśli trzeba, pobierz zaktualizowany obrazek i zweryfikuj, czy plansza zgadza się ze schematem.
-5. **Odbierz flagę** - gdy konfiguracja jest poprawna, hub zwraca {FLG:...}.
+- Gdy jest bezpiecznie, odpowiedź zawiera tekst `"It's clear!"`
+- Gdy jesteś namierzany, odpowiedź zawiera JSON z kilkoma polami. Przede wszystkim jest tam podana częstotliwość namierzania oraz ciąg znaków niezbędny do wygenerowania kodu unicestwiającego radar.
 
-### Wskazówki
+> **Pamiętaj:** odpowiedzi ze skanera są zniekształcone przez systemy zagłuszające. To, co otrzymasz, może wyglądać jak JSON, ale może nie być zdatne do parsowania.
 
-- **LLM nie widzi obrazka** - stan planszy to plik PNG, ale agentowi trzeba podać go w takiej formie, żeby mógł nad nim rozumować. Zastanów się: w jaki sposób można opisać wygląd każdego pola słowami lub symbolami? Jak przekazać te informacje modelowi tekstowo, żeby mógł zaplanować obroty? Można próbować wysyłać obrazek bezpośrednio do modelu z możliwościami przetwarzania obrazów (vision), natomiast czy opłaca się to robić w głównej pętli agenta? Warto opisanie obrazka wydelegować do odpowiedniego narzędzia lub subagenta.
-- **Problemy modeli Vision** - nie wszystkie modele vision będą dobrze radziły sobie z tym zadaniem. Przetestuj które modele zwracają najlepsze wyniki. Może warto odpowiednio przygotować obraz zanim zostanie wysłany do modelu? Czy musi być wysłany w całości? Jeden z lepszych modeli do użycia to google/gemini-3-flash-preview.
-- **Mechanika obrotów** - każdy obrót to 90 stopni w prawo. Żeby obrócić pole "w lewo" (90 stopni w lewo), wykonaj 3 obroty w prawo. Kable na każdym polu mogą wychodzić przez różną kombinację krawędzi (lewo, prawo, góra, dół) - obrót przesuwa je zgodnie z ruchem wskazówek zegara.
-- **Podejście agentowe** - to zadanie szczególnie dobrze nadaje się do rozwiązania przez agenta z Function Calling. Agent może samodzielnie: odczytać i zinterpretować stan mapy, porównać z celem, wyliczyć potrzebne obroty i wysłać je sekwencyjnie - bez sztywnego kodowania kolejności w kodzie.
-- **Weryfikuj po każdej partii obrotów** - po wykonaniu kilku obrotów możesz pobrać świeży obrazek i sprawdzić, czy aktualny stan zgadza się ze schematem. Błędy w interpretacji obrazu mogą skutkować niepotrzebnymi obrotami lub koniecznością resetu.
+## Neutralizacja pułapki
+
+Gdy skaner wykryje namierzanie, musisz zneutralizować pułapkę, zanim wykonasz kolejny ruch. Wyślij **POST** na:
+
+```
+https://hub.ag3nts.org/api/frequencyScanner
+```
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "frequency": 123,
+  "disarmHash": "abc123def456..."
+}
+```
+
+Gdzie:
+
+- **`frequency`** — wartość liczbowa z pola `"frequency"` odczytana z odpowiedzi skanera.
+- **`disarmHash`** — hash SHA1 obliczony z wartości pola `"detectionCode"` z dopisanym na końcu słowem `"disarm"` (czyli SHA1 z ciągu: `detectionCode + "disarm"`).
+
+Jeśli dane będą poprawne, pułapka zostanie rozbrojona i będziesz mógł bezpiecznie kontynuować lot.
+
+## Co musisz zrobić
+
+1. Wystartuj grę komendą `"start"` i zanotuj pozycję bazy docelowej.
+2. Na każdym polu najpierw odpytaj skaner częstotliwości przez API `frequencyScanner`, aby sprawdzić, czy nie jesteś namierzany.
+3. Jeśli jesteś namierzany, sparsuj zniekształconą odpowiedź skanera, wyciągnij z niej `"detectionCode"` i `"frequency"`, oblicz hash SHA1 i wyślij go do skanera, aby rozbroić pułapkę.
+4. Pobierz wskazówkę radiową z endpointu `getmessage`, aby dowiedzieć się, gdzie jest skała w następnej kolumnie.
+5. Na podstawie wskazówki wybierz odpowiednią komendę ruchu (`go`/`left`/`right`) i przesuń rakietę. Pamiętaj, że nie wolno Ci także wylecieć poza mapę.
+6. Powtarzaj kroki 2–5 aż dotrzesz do bazy w Grudziądzu.
+
+Gdy rakieta dotrze do Grudziądza, otrzymasz flagę.
