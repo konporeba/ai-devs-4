@@ -8,6 +8,7 @@ s3e1/sensors_data/
 .env
 .env.local
 .env.*.local
+KEY
 
 # TypeScript build output
 dist/

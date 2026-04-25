@@ -37,7 +37,7 @@ const CONFIG = {
 
   okoBaseUrl: "https://oko.ag3nts.org",
   okoLogin: "Zofia",
-  okoPassword: "Zofia2026!",
+  okoPassword: process.env.OKO_PASSWORD || "",
 
   // Model przez OpenRouter — claude-haiku jest tańszy, ale radzi sobie z tym zadaniem
   // Alternatywy: "anthropic/claude-sonnet-4-5" (droższy, lepszy), "openai/gpt-4o-mini"
