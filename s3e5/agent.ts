@@ -30,7 +30,7 @@ import * as fs from "fs";
 // =====================================================================
 
 // Klucz API do autoryzacji wszystkich zapytań
-const API_KEY = "1fd2f6a6-9e2b-4ab4-bd4d-20198d42b18e";
+const API_KEY = process.env.TASK_API_KEY || "";
 
 // Bazowy adres serwera zadania
 const BASE_URL = "https://hub.ag3nts.org";

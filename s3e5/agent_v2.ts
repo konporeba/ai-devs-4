@@ -58,11 +58,10 @@ import * as fs from "fs";
 // =====================================================================
 
 // Klucz do API zadania (autoryzacja przy zapytaniach do hub.ag3nts.org)
-const TASK_API_KEY = "1fd2f6a6-9e2b-4ab4-bd4d-20198d42b18e";
+const TASK_API_KEY = process.env.TASK_API_KEY || "";
 
 // Klucz do OpenRouter (platforma LLM — obsługuje Claude, GPT, Gemini itp.)
-const OPENROUTER_API_KEY =
-  "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";
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "";
 
 // Bazowy adres serwera zadania
 const TASK_BASE_URL = "https://hub.ag3nts.org";
