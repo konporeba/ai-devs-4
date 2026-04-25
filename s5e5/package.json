@@ -1,0 +1,18 @@
+{
+  "name": "s5e5-timetravel-assistant",
+  "version": "1.0.0",
+  "description": "CHRONOS-P1 guided CLI assistant — AI Devs 4 S5E5",
+  "main": "dist/timetravel.js",
+  "scripts": {
+    "start": "ts-node src/timetravel.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

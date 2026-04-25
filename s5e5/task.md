@@ -1,71 +1,102 @@
-## Zadanie
+# Zadanie praktyczne
 
-Masz do rozwiązania puzzle elektryczne na planszy 3x3 - musisz doprowadzić prąd do wszystkich trzech elektrowni (PWR6132PL, PWR1593PL, PWR7264PL), łącząc je odpowiednio ze źródłem zasilania awaryjnego (po lewej na dole). Plansza przedstawia sieć kabli - każde pole zawiera element złącza elektrycznego. Twoim celem jest doprowadzenie prądu do wszystkich elektrowni przez obrócenie odpowiednich pól planszy tak, aby układ kabli odpowiadał podanemu schematowi docelowemu. Źródłową elektrownią jest ta w lewym-dolnym rogu mapy. Okablowanie musi stanowić obwód zamknięty.
+Musisz uruchomić maszynę czasu i otworzyć tunel czasowy do **12 listopada 2024 roku**. To data na dzień przed tym, jak Rafał został znaleziony w jaskini. Nie mamy dostatecznie dużo energii na otworzenie tunelu, więc nasz plan zakłada jeden dodatkowy skok.
 
-Jedyna dozwolona operacja to obrót wybranego pola o 90 stopni w prawo. Możesz obracać wiele pól, ile chcesz - ale za każdy obrót płacisz jednym zapytaniem do API.
+Przenieś się do **5 listopada 2238 roku**. Tam jeden z naszych ludzi wręczy Ci nową paczkę baterii. Po ich wymianie wróć do teraźniejszości (dzisiejsza data) i z tego poziomu otwórz tunel do daty spotkania z Rafałem.
 
-**Nazwa zadania: electricity**
+Maszyna aby poprawnie działać — i nie zabić Cię przy okazji — potrzebuje zdefiniowania szeregu ustawień. Część z nich wyklikujesz w interfejsie webowym, a część można ustawić jedynie przez API. Tym razem nie tworzymy więc automatu, który wykona wszystko za Ciebie, a asystenta, który będzie Cię instruować, co należy ustawić i w jaki sposób, a następnie zweryfikuje, czy ustawienia są poprawne i podpowie co można zrobić dalej.
 
-### Jak wygląda plansza?
+- **Nazwa zadania:** `timetravel`
+- **Odpowiedź wysyłasz do:** https://hub.ag3nts.org/verify
+- **Dokumentacja urządzenia** (to bardzo ważne!): https://hub.ag3nts.org/dane/timetravel.md
+- **Interfejs do sterowania maszyną czasu:** https://hub.ag3nts.org/timetravel_preview
 
-Aktualny stan planszy pobierasz jako obrazek PNG:
+Pracę zacznij od przeczytania dokumentacji. Znajdziesz tam zasady wyliczania sync ratio, opis przełączników PT-A i PT-B, ograniczenia baterii, wymagania dla flux density, znaczenie `internalMode` oraz tabelę ochrony PWR zależną od roku. Bez tej dokumentacji daleko nie zajedziesz.
 
-```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png
-```
+Na początek warto wywołać przez API funkcję `help`:
 
-Pola adresujesz w formacie AxB, gdzie A to wiersz (1-3, od góry), a B to kolumna (1-3, od lewej):
-
-```
-1x1 | 1x2 | 1x3
-----|-----|----
-2x1 | 2x2 | 2x3
-----|-----|----
-3x1 | 3x2 | 3x3
-```
-
-### Jak wygląda rozwiązanie?
-
-<https://hub.ag3nts.org/i/solved_electricity.png>
-
-### Jak komunikować się z hubem?
-
-Każde zapytanie to POST na https://hub.ag3nts.org/verify:
-
-```
+```json
 {
-  "apikey": "tutaj-twój-klucz",
-  "task": "electricity",
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
   "answer": {
-    "rotate": "2x3"
+    "action": "help"
   }
 }
 ```
 
-Jedno zapytanie = jeden obrót jednego pola. Jeśli chcesz obrócić 3 pola, wysyłasz 3 osobne zapytania.
+Przykładowe ustawienie roku przez API wygląda tak:
 
-Gdy plansza osiągnie poprawną konfigurację, hub zwróci flagę {FLG:...}.
-
-### Reset planszy
-
-Jeśli chcesz zacząć od początku, wywołaj GET z parametrem reset:
-
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
+  "answer": {
+    "action": "configure",
+    "param": "year",
+    "value": 1234
+  }
+}
 ```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png?reset=1
+
+Tak samo konfigurujesz pozostałe parametry dostępne w API, czyli `day`, `month`, `syncRatio` oraz `stabilization`.
+
+Przydatne będą też inne podstawowe akcje:
+
+**Pobranie aktualnej konfiguracji**
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
+  "answer": {
+    "action": "getConfig"
+  }
+}
 ```
 
-### Co należy zrobić w zadaniu?
+**Reset urządzenia**
 
-1. **Odczytaj aktualny stan** - pobierz obrazek PNG i ustal, jak ułożone są kable na każdym z 9 pól.
-2. **Porównaj ze stanem docelowym** - ustal, które pola różnią się od wyglądu docelowego i ile obrotów (po 90 stopni w prawo) każde z nich potrzebuje.
-3. **Wyślij obroty** - dla każdego pola wymagającego zmiany wyślij odpowiednią liczbę zapytań z polem rotate.
-4. **Sprawdź wynik** - jeśli trzeba, pobierz zaktualizowany obrazek i zweryfikuj, czy plansza zgadza się ze schematem.
-5. **Odbierz flagę** - gdy konfiguracja jest poprawna, hub zwraca {FLG:...}.
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
+  "answer": {
+    "action": "reset"
+  }
+}
+```
 
-### Wskazówki
+## Co musi robić Twój asystent
 
-- **LLM nie widzi obrazka** - stan planszy to plik PNG, ale agentowi trzeba podać go w takiej formie, żeby mógł nad nim rozumować. Zastanów się: w jaki sposób można opisać wygląd każdego pola słowami lub symbolami? Jak przekazać te informacje modelowi tekstowo, żeby mógł zaplanować obroty? Można próbować wysyłać obrazek bezpośrednio do modelu z możliwościami przetwarzania obrazów (vision), natomiast czy opłaca się to robić w głównej pętli agenta? Warto opisanie obrazka wydelegować do odpowiedniego narzędzia lub subagenta.
-- **Problemy modeli Vision** - nie wszystkie modele vision będą dobrze radziły sobie z tym zadaniem. Przetestuj które modele zwracają najlepsze wyniki. Może warto odpowiednio przygotować obraz zanim zostanie wysłany do modelu? Czy musi być wysłany w całości? Jeden z lepszych modeli do użycia to google/gemini-3-flash-preview.
-- **Mechanika obrotów** - każdy obrót to 90 stopni w prawo. Żeby obrócić pole "w lewo" (90 stopni w lewo), wykonaj 3 obroty w prawo. Kable na każdym polu mogą wychodzić przez różną kombinację krawędzi (lewo, prawo, góra, dół) - obrót przesuwa je zgodnie z ruchem wskazówek zegara.
-- **Podejście agentowe** - to zadanie szczególnie dobrze nadaje się do rozwiązania przez agenta z Function Calling. Agent może samodzielnie: odczytać i zinterpretować stan mapy, porównać z celem, wyliczyć potrzebne obroty i wysłać je sekwencyjnie - bez sztywnego kodowania kolejności w kodzie.
-- **Weryfikuj po każdej partii obrotów** - po wykonaniu kilku obrotów możesz pobrać świeży obrazek i sprawdzić, czy aktualny stan zgadza się ze schematem. Błędy w interpretacji obrazu mogą skutkować niepotrzebnymi obrotami lub koniecznością resetu.
+- odczytać z dokumentacji sposób wyliczania `syncRatio` dla wybranej daty i zaimplementować generator do jego wyliczania
+- po ustawieniu pełnej daty pobierać z API wskazówki dotyczące `stabilization` i na ich podstawie ustawiać poprawną wartość
+- sprawdzać aktualny stan urządzenia przez `getConfig`
+- podpowiadać operatorowi, kiedy `internalMode` przyjął właściwą wartość, bo tego parametru nie da się ustawić ręcznie
+- informować użytkownika, jakie ustawienia w preview trzeba zmienić ręcznie przed kolejnym skokiem
+
+## Co musisz zrobić Ty?
+
+- wykonaj skok do 2238 roku i zdobądź baterie
+- wróć do dzisiejszej daty
+- otwórz portal do 2024 roku
+
+Aby to zrealizować będziesz musiał przestawiać wartości parametrów **PT-A** i **PT-B** w interfejsie, zmieniać wartości suwaka **PWR** i przełączać stan urządzenia między `standby`/`active`.
+
+## O czym musisz pamiętać
+
+- API pozwala konfigurować tylko `day`, `month`, `year`, `syncRatio` i `stabilization`
+- **PT-A, PT-B i PWR** ustawiasz w interfejsie WWW, a nie przez `/verify`
+- zmiany parametrów przez API są możliwe tylko wtedy, gdy urządzenie jest w trybie `standby`
+- poprawny skok wymaga **flux density = 100%**
+- `internalMode` zmienia się automatycznie co kilka sekund i musi pasować do zakresu docelowego roku
+- jeśli rozładujesz baterię do zera, zostaną Ci tylko akcje `help`, `getConfig` i `reset`
+- tryb tunelu czasowego wymaga jednoczesnego włączenia PT-A i PT-B, ale zużywa więcej energii niż zwykły skok
+
+Najrozsądniejsze rozwiązanie to przygotowanie prostego skryptu CLI, który komunikuje się z `/verify`, wylicza parametry z dokumentacji, odczytuje odpowiedzi API i wyświetla operatorowi krótkie, konkretne instrukcje typu: co ustawić w preview, na jaki tryb poczekać i kiedy wykonać skok.
+
+Jeśli dobrze połączysz analizę dokumentacji, odczyt stanu z API i współpracę z człowiekiem obsługującym interfejs, Centrala odeśle flagę.
+
+## Wersja dla bardziej ambitnych
+
+Zamiast tworzyć asystenta podpowiadającego agentowi jak skakać w czasie, stwórz automat, który jednocześnie obsługuje frontend i backend. Idealnie byłoby, gdyby to były dwa osobne agenty wymieniające się informacjami za pomocą dowolnego współdzielonego zasobu (baza, pliki, kolejka — co preferujesz).

@@ -1,277 +1,405 @@
 ---
-title: S02E02 — Zewnętrzny kontekst narzędzi i dokumentów
+title: S05E05 — Nowa Rzeczywistość
 space_id: 2476415
 status: scheduled
-published_at: '2026-03-17T04:00:00Z'
+published_at: '2026-04-10T04:00:00Z'
 is_comments_enabled: true
 is_liking_enabled: true
 skip_notifications: false
-cover_image: 'https://cloud.overment.com/2026-03-12/summoning-3ab92ee0-d.png'
-circle_post_id: 30573301
+cover_image: 'https://cloud.overment.com/05_05_cover-1775468427.png'
+circle_post_id: 31353142
 ---
-» [Lekka wersja przeglądarkowa](https://cloud.overment.com/s02e02-zewnetrzny-kontekst-narzedzi-i-dokumentow-1773309048.html) oraz [markdown](https://cloud.overment.com/s02e02-zewnetrzny-kontekst-narzedzi-i-dokumentow-1773309019.md) «
 
-Łączenie dużych modeli językowych z własnymi źródłami danych to jedna z najważniejszych możliwości generatywnej sztucznej inteligencji. Bo choć „chodząca Wikipedia” może być użyteczna, to zdolność odpowiadania na pytania dotyczące naszego kontekstu jest czymś zupełnie innym. Tym bardziej, że dziś mówimy nie tylko o odpowiedziach, ale także akcjach.
+> Informacyjnie: treść tej lekcji pozostawała w tajemnicy do chwili jej publikacji. Z tego powodu dziś nie będzie nagrania audio, a treść przykładu nie znajduje się w repozytorium, lecz archiwum podlinkowanym w treści. Będzie za to kilka niespodzianek!
 
-Wielokrotnie obserwowaliśmy już, jak LLM podążał za instrukcjami zawartymi w wiadomości systemowej, odpowiadał na podstawie wyników wyszukiwania w Internecie, przekształcał przesłane pliki, a nawet wykorzystywał predefiniowane szablony, jednocześnie zmieniając część ich ustawień. W tym wszystkim dostrzegaliśmy także zdolność do nawigowania po plikach oraz interakcji z nimi.
+## Film do lekcji
 
-W praktyce narzędzia wykorzystujące generatywne AI niemal zawsze wchodzą w interakcję z danymi zewnętrznymi, niezależnie od tego, czy mówimy o systemie wieloagentowym, czy o prostym workflow. Często też źródła wiedzy, z którymi pracujemy, są bardzo rozbudowane, nierzadko rozproszone, a tylko czasem mamy wpływ na ich kształt. To wszystko przekłada się na szereg wyzwań, na które musimy odpowiedzieć. I właśnie o tym jest niniejsza lekcja.
+![https://vimeo.com/1179912090](https://vimeo.com/1179912090)
 
-## Wpływ zewnętrznego kontekstu na zachowanie modelu
+Przynajmniej część z nas programuje we współpracy z AI, generując ponad 90% kodu. W zaledwie kilka lat przeszliśmy drogę od ręcznego tworzenia logiki do etapu, w którym AI pełniło rolę wsparcia. Wtedy korzystaliśmy z mechanizmów podpowiadania składni, takich jak IntelliSense, a później z AI Completion. Dziś w dużym stopniu role się odwróciły i to **my wspieramy AI w generowaniu kodu**, nadzorując kierunek jego rozwoju, dostarczając niezbędny kontekst, podejmując kluczowe decyzje oraz dbając o jakość rezultatu.
 
-Interakcja z LLM jest ustrukturyzowana (system/user/tool/assistant), a poszczególne role pełnią określone funkcje. Wiemy też, że zewnętrzne informacje niemal zawsze będą dostarczane poprzez narzędzia, wpływając na zachowanie modelu. Rzecz w tym, że na tym etapie powinno być również jasne, że LLM nie „wykonuje” promptu tak, jak wykonuje się kod. Nie wiemy do końca, co w danym momencie jest brane pod uwagę, a co nie. Może się więc okazać, że treści dodane do kontekstu w wyniku posługiwania się narzędziami wpłyną na zachowanie agenta w taki sposób, że popełni błąd lub nawet zrobi coś, czego nie powinien, wliczając w to także naruszenia bezpieczeństwa.
+Choć rzeczywistość, o której tu mowa, nie jest jeszcze powszechna i wciąż mnóstwo osób programuje bez pomocy AI, przynajmniej w naszym otoczeniu ta zmiana właśnie się dokonuje, a sama adaptacja postępuje niezwykle szybko. Poza tym wciąż obserwujemy rozwój modeli generatywnej sztucznej inteligencji. Jedni mówią, że "**przyspieszenie przyspiesza**", inni, że to droga donikąd. Nie wiadomo dokładnie, kto ma rację.
 
-Zatem zanim zaczniemy podłączać agentów do wszystkich możliwych treści, musimy mieć na uwadze kwestię bezpieczeństwa i nie mówię tu tylko o przesyłaniu danych na serwery dostawców. Obecnie podłączanie agentów do zewnętrznych źródeł danych jest porównywalne z utworzeniem formularza, który nie posiada walidacji, a przesłane dane są później wyświetlane na stronie poprzez bezpośrednie renderowanie HTML (co otwiera przestrzeń na ataki XSS). I choć możemy stosować różne techniki filtrowania zapytań, to na tę chwilę nie posiadamy narzędzi gwarantujących bezpieczeństwo, więc musimy adresować ten problem na poziomie założeń, na przykład poprzez ograniczenie zakresu treści przetwarzanych przez agenta oraz zakresu jego umiejętności.
+Przez ostatni miesiąc budowaliśmy systemy agentowe i obserwowaliśmy różnego rodzaju problemy, które wciąż są obecne w AI. To samo dotyczy kwestii bezpieczeństwa oraz zupełnie nowych wektorów ataku, które się z tym wiążą. Choć nauczyliśmy się bardzo dużo o projektowaniu takich systemów, zwiększaniu ich skuteczności i wprowadzaniu różnych ograniczeń, wciąż mamy więcej pytań niż odpowiedzi. Wygląda więc na to, że wszyscy **eksplorujemy**, nikt nic nie wie **na pewno** i nie wiemy, co nadchodzi. Wiemy natomiast całkiem sporo o tym, co dzieje się **teraz**.
 
-Schemat poniżej obrazuje sytuację, w której agent, poproszony o sprawdzenie najnowszych maili, odnajduje wśród nich wiadomość zawierającą instrukcję przesłania wiadomości na wskazany adres e-mail. Jeśli ten kontekst zostanie odpowiednio zbudowany, agent faktycznie podejmie dodatkowy krok, o który użytkownik go nie prosił.
+I właśnie tutaj jest przestrzeń, w której możemy podjąć działanie.
 
-![Przykład naruszenia bezpieczeństwa przy pracy z zewnętrznym kontekstem](https://cloud.overment.com/2026-02-09/ai_devs_4_injection-435b62c3-7.png)
+## Nowe możliwości, nowe wyzwania, stare zasady
 
-W takiej sytuacji może potencjalnie nie pomóc nawet automatyczne filtrowanie wiadomości, gdzie LLM ocenia ryzyko bezpieczeństwa, ponieważ instrukcja może być zbudowana tak, aby oszukać także ten filtr. Jeśli jednak użytkownik zostanie poproszony o zgodę na uruchomienie akcji, bądź gdy agent zwyczajnie **nie będzie miał narzędzi** które pozwalają mu na wysyłanie maili, to trudno będzie mówić o możliwym ataku.
+![https://vimeo.com/1181632738](https://vimeo.com/1181632738)
 
-Problem bezpieczeństwa systemu nie jest jedynym wyzwaniem, z jakim będziemy się mierzyć, bo nawet w lekcji S02E01 widzieliśmy, że dotarcie do wszystkich treści potrzebnych do udzielenia odpowiedzi wcale nie jest oczywiste. Tym bardziej że w praktyce przyjdzie nam pracować nie tylko z dokumentami Markdown, ale także z różnymi formatami plików, a nawet automatyzacji pobierania treści stron www.
+> 🚨 UWAGA! Kod źródłowy projektu dostępny jest 📎 [tutaj](https://cloud.overment.com/wonderlands-1775780610.zip).
 
-Poniżej mamy przykład sytuacji, w której użytkownik pyta o cennik i dostępne funkcjonalności. System w sposób automatyczny musi odnaleźć 3 różne dokumenty i wydobyć z nich potrzebne informacje, jednak po drodze mogą pojawić się problemy z procesem wyszukiwania, ale też z fizyczną trudnością odczytania wybranych fragmentów dokumentów (na przykład tabel bądź wykresów w dokumentach PDF czy docx).
+Dotychczasowe doświadczenia w budowaniu systemów agentowych rysują nam szeroki obraz projektowania takich aplikacji - widzimy tam **nowe możliwości i wyzwania**, ale też **znane nam zasady i procesy**. W praktyce, odnalezienie się takiej rzeczywistości jest dość trudne, ponieważ będziemy doświadczać **podważania tego**, co uznajemy za słuszne, a nasze przekonania będą musiały ulegać **dopasowaniu** do zmieniającego się otoczenia.
 
-![Problem dotarcia do treści (retrieval)](https://cloud.overment.com/2026-02-09/ai_devs_4_retrieval_issues-8f28191e-f.png)
+Przykładem prezentującym tę "nową rzeczywistość" może być rozwijanie **złożonego systemu wyłącznie na własne potrzeby**. Jeszcze do niedawna coś takiego kojarzyło się to z długimi miesiącami pracy "po godzinach". Niekiedy miało to sens, ale głównie ze względów edukacyjnych bądź tworzenia pobocznego projektu, który miał potencjał stać się np. startupem. Natomiast dziś pomysł na aplikację mobilną możemy zrealizować nawet w ciągu jednego popołudnia - mam tutaj na myśli relatywnie proste aplikacje, które mogą stać się częścią naszego dnia.
 
-Wiemy też, że rozbudowany kontekst negatywnie wpływa na skuteczność działania modelu, a obecnie problem ten występuje nawet w najnowszych LLM. W praktyce oznacza to, że agent może „zapomnieć” (bądź zignorować) część instrukcji systemowych, ponieważ zbyt duża część jego „uwagi” będzie skupiona na nowo dodanych treściach. To właśnie z tego powodu w S02E01 omawialiśmy powtarzanie najważniejszych instrukcji, a wcześniej także "wzmacnianie" zachowań poprzez wskazówki zwracane wraz z odpowiedzią narzędzi. Problem ten został omówiony między innymi w "[How Many Instructions LLMs Follows at Once](https://arxiv.org/pdf/2507.11538)" oraz "[Reasoning on Multiple Needles In A Haystack](https://arxiv.org/pdf/2504.04150v1)".
+W tej lekcji omówimy przykład, który ma na celu zaprezentowanie tego, **jak łączą się koncepcje z AI_devs 4: Builders** w jednym projekcie, ale w wydaniu, które możliwie jak najlepiej odzwierciedli **środowisko produkcyjne**. Poza tym, porozmawiamy nie tylko o architekturze, ale także o praktycznych zastosowaniach. Tymczasem, jego główne elementy obejmują:
 
-Poniżej mamy inny przykład interakcji w której treść wczytanych dokumentów prowadzi do pominięcia niektórych instrukcji. Choć jakość samej wypowiedzi jest relatywnie wysoka, tak sposób jej prezentacji znacznie odbiega od tego, na czym nam zależy.
+- **API** do interakcji z agentem z którego korzysta interfejs czatu, ale również my możemy wysyłać do niego zapytania, które zostaną przetworzone w tle.
+- **Czat:** to bardzo zaawansowany interfejs obejmujący niemal wszystkie mechaniki, które omówiliśmy w AI_devs (np. strumieniowanie, bloki, prompt cache, obsługa referencji plików czy interakcji pomiędzy agentami).
+- **Agent:** to logika, którą omawialiśmy w ostatnich lekcjach, więc obejmuje współpracę pomiędzy agentami, jest oparta o zdarzenia oraz system zarządzania zadaniami agentów. Tutaj zadbałem także o poprawne emitowanie zdarzeń oraz wznawianie aktywności w przypadku utraty połączenia. Poza tym mamy także kompresję kontekstu z wykorzystaniem Observational Memory.
+- **Narzędzia:** poza narzędziami natywnymi (np. **web search** czy **delegate**) mamy tutaj także wsparcie dla MCP, zarówno w domyślnym trybie Function Calling, jak i **w „Code Mode”** (o ile skonfigurowany jest sandbox umożliwiający uruchamianie kodu). Tryb MCP wspiera także rozszerzenie MCP Apps.
+- **Obrazy:** generowanie obrazów opiera się o modele providerów OpenAI / Gemini / OpenRouter i obejmuje także **edycję** plików wgranych przez użytkownika.
+- **Sandbox:** działa w dwóch trybach - procesu **node.js** bądź narzędzia **[lo](https://github.com/just-js/lo)**, natomiast sam dostęp do systemu plików odbywa się domyślnie przez [just-bash](https://github.com/vercel-labs/just-bash). Sandbox należy tu traktować bardziej jako prezentację i eksperymentalną formę, aczkolwiek zestaw **lo + just-bash** ze względu na swoją lekkość prawdopodobnie sprawdziłby się na produkcji dla uruchamiania narzędzi w trybie **"Code Mode"**. Ewentualnie można przebudować system i skorzystać z [Daytona](https://www.daytona.io/).
+- **Przeglądarka:** pozwala agentowi na dostęp do przeglądarki z pomocą lokalnie uruchomionego [kernel.sh](https://kernel.sh/). W kontekście produkcyjnym należałoby skorzystać z ich planu, bądź przełączyć się na alternatywy, np. [browserbase](https://www.browserbase.com/)
+- **Garden:** to znacznie rozbudowana wersja z przykładu **S05E01**. Strona www generowana jest na podstawie systemu plików w przestrzeni danego użytkownika. Agent ma możliwość odczytywać i modyfikować jej zawartość (w zależności od jego ustawień), a sama strona może być przebudowana w tle. Poza tym pliki oznaczone w sekcji frontmatter jako **visibility: private** nie są wyświetlone w menu i są zablokowane hasłem.
 
-![Przykład negatywnego wpływu długiego kontekstu na zachowanie modelu](https://cloud.overment.com/2026-02-09/ai_devs_4_instruction_dropout-b8d8280e-1.png)
+![Możliwości projektu](https://cloud.overment.com/2026-04-08/ai_devs_4_capabilities-a90266fe-6.png)
 
-Zatem w pracy z zewnętrznym kontekstem będzie nam zależało na:
+Ogólna koncepcja jest tu jednak bardzo prosta: **jest to agent, którego bazą wiedzy jest nasz "cyfrowy ogród"**, czyli strona www generowana na podstawie systemu plików tekstowych, które są ze sobą połączone katalogami, tagami bądź "wikilinkami".
 
-- Zawężeniu zakresu źródeł dokumentów, aby zminimalizować ryzyko intencjonalnego prompt injection
-- Zbudowaniu systemu docierania do treści, który osiągnie możliwie najwyższą skuteczność dla wybranego zakresu
-- Ograniczeniu treści jednorazowo wczytywanych do kontekstu, przez techniki optymalizacji, na przykład dekompozycję czy subagentów.
-- Stworzeniu interfejsu użytkownika, który ułatwi nawigowanie po treści i zaadresuje ewentualne pomyłki po stronie modelu (na przykład poprzez wyświetlenie fragmentów oryginalnych plików i odnośników do nich)
+![Wizualizacja interakcji](https://cloud.overment.com/2026-04-08/ai_devs_content-ebf6decb-e.png)
 
-## Zasady obsługi kontekstu z zewnętrznych źródeł
+Zatem w trakcie rozmowy możemy poprosić o zapisanie bądź wczytanie informacji. Agent może też korzystać z niej przy posługiwaniu się narzędziami, których fundament obejmuje odpowiedniki **terminala** (just-bash), **wykonanie kodu** (sandbox lo bądź node) oraz **przeglądarkę** (kernel.sh).
 
-Do tej pory łączyliśmy model z zewnętrznymi źródłami poprzez bezpośredni dostęp do wybranych plików lub stron www. W obu przypadkach treść mogła zostać dostarczona do kontekstu w oryginalnej formie, poprzez wczytywanie fragmentów bądź całych dokumentów. W ten sposób możliwa jest praca nawet z obszernymi bazami wiedzy, ponieważ i tak w danej chwili agent uzyskuje dostęp tylko do wybranych treści.
+Całość możemy zorganizować w zespół powiązanych ze sobą agentów, posiadających dostęp do wybranych obszarów systemu plików oraz narzędzi. Możliwe jest więc skonfigurowanie tego systemu tak, aby adresował różne obszary naszej codzienności, takich jak nauka, budowanie nawyków, hobby czy projekty zawodowe. A gdy tylko będziemy chcieli, baza wiedzy (lub jej część) będzie mogła zostać opublikowana w formie strony www.
 
-Wystarczy jednak, że baza wiedzy zacznie obejmować dokumenty PDF, DOCX, XLSX czy obrazy, a wtedy sytuacja komplikuje się pod każdym względem. Teoretycznie agent może skorzystać z narzędzi (np. CLI), aby odczytać treść dokumentów i obrazów. Jednak nie rozwiązuje to problemu **odnalezienia treści**, ponieważ początkowo nie będzie jasne, w którym pliku znajduje się to, czego szukamy. Konieczne staje się więc **indeksowanie** dokumentów, obejmujące także ich opisywanie, a nierzadko również transformacje w postaci podsumowań czy dokumentów utworzonych na podstawie oryginalnych plików.
+![Zespół agentów](https://cloud.overment.com/2026-04-08/ai_devs_4_team-c69fd902-e.png)
 
-Indeksowanie zwykle obejmuje:
+Kluczowym elementem jest także fakt, że system może działać **w tle**, otrzymując zapytania z zewnętrznych źródeł. Możliwe jest także rozbudowanie go o wewnętrzny system zdarzeń czy harmonogramu. Uruchomione w nim zadania zostaną wyświetlone w historii konwersacji, więc w razie potrzeby, będziemy mogli do nich wrócić bądź zareagować w chwili, gdy system będzie tego potrzebował.
 
-- Podział plików na mniejsze fragmenty, tzw. chunki bądź dokumenty
-- Przypisanie metadanych określających pochodzenie chunków i kluczowe informacje
-- Utworzenie nowych dokumentów na podstawie istniejących (np. w celu syntezy treści)
-- Utworzenie opisów obrazów czy transkrypcji materiałów wideo
-- Utworzenie mapy powiązań, na przykład grafów, przydatnych na etapie wyszukiwania
-- Opracowanie logiki synchronizacji danych z ich źródłem
+Wszystkie te możliwości nie dają realnej wartości „out of the box”, czyli domyślnie taki system będzie dla nas jedynie imponującym chatbotem. Musimy więc zastanowić się nad zespołem agentów, ich narzędziami oraz procedurami. Po ich wdrożeniu, początkowo nie wszystko będzie działać tak, jak byśmy tego chcieli i dopiero po kilku iteracjach dojdziemy do pierwszych działających przypadków użycia. Tutaj najlepiej jest wykorzystać wiedzę z wcześniejszych lekcji oraz zacząć od czegoś prostego na początek tak, aby oswoić się z systemem.
 
-![Indeksowanie treści](https://cloud.overment.com/2026-02-09/ai_devs_4_indexing-dcc40bf2-d.png)
+Alternatywną ścieżką jest zapoznanie się z kodem źródłowym tego projektu oraz przeniesienie wybranych funkcjonalności do swoich projektów. To pozwoli nam jeszcze lepiej zrozumieć ich strukturę oraz zasady działania. Ewentualnie nic nie stoi też na przeszkodzie, aby główna logika agenta była realizowana przez narzędzia takie jak Claude Code czy Pi. Wówczas skupimy się jedynie na narzędziach oraz kształtowaniu procesów.
 
-Po zaindeksowaniu dokumentów agent otrzymuje dostęp do narzędzi umożliwiających mu przeszukiwanie ich treści. Rzadko jednak zdarza się, że taka baza wiedzy ma statyczną formę, więc system musi przewidywać jakieś formy synchronizacji na podstawie zdarzeń bądź harmonogramu.
+Tymczasem, jeśli rzucimy okiem na ogólną strukturę projektu, to zobaczymy w nim podział **client / server** dokładnie taki, z którym mieliśmy do czynienia w **S05E04**. Natomiast tym razem, jest to jedna aplikacja z współdzielonymi kontraktami opisującymi strukturę komunikacji opartej o zdarzenia. Na tyle, na ile to możliwe, zadbałem także o to, aby poszczególne moduły aplikacji były odseparowane w kontekście ich głównej logiki, ale połączone ze sobą tak lekko, jak to możliwe. W ten sposób rozwój tego projektu, nie powinien sprawić zbyt dużego problemu.
 
-Niezależnie od tego, czy załączniki lub całe bazy wiedzy wymagają indeksowania, czy nie, musimy zadbać o odpowiedni poziom bezpieczeństwa oraz o dobre praktyki pracy z plikami. Nawet mimo świadomości, że nie mamy możliwości skutecznego zabezpieczenia się przed potencjalnie szkodliwymi treściami w zewnętrznych dokumentach, nie oznacza to, że możemy odpuścić kwestie bezpieczeństwa. Dlatego:
+![Structure](https://cloud.overment.com/2026-04-08/ai_devs_4_structure-e6da682e-4.png)
 
-- Załączniki muszą być poddane walidacji obejmującej ich rozmiar, format, weryfikację mime-type oraz niekiedy także źródło (np. nadawca maila, bądź domena strony www).
-- Tekst i obrazy powinny [przejść moderację](https://platform.openai.com/docs/guides/moderation), szczególnie w przypadku providerów, którzy tego wymagają, ale też nierzadko będziemy chcieli sprawdzić te treści pod kątem naszych wymagań oraz polityk przetwarzania danych.
-- Zapisane dokumenty muszą być bezwzględnie chronione pod kątem nieuprawnionego dostępu. Użytkownik (oraz agenci pracujący na jego plikach) muszą posiadać odpowiednie uprawnienia.
-- Pracując z agentami dość często konieczne będzie udostępnianie plików w formie **otwartych linków**. Jeśli nie da się tego uniknąć, należy zadbać o to, aby linki były **trudne do odgadnięcia** oraz aby wygasały po określonym czasie.
-- Warto także zadbać o optymalizację, bo chociażby w przypadku OpenAI [nie mogą być większe niż 50MB](https://platform.openai.com/docs/guides/images-vision?api-mode=chat) w ramach jednego zapytania. Optymalizacja jest także wskazana z punktu widzenia przechowywania treści.
+Jeśli chodzi o główną mechanikę działania, to również pozostaje ona niemal w pełni taka sama, jak z przykładu z **S05E04**, więc nie będę się tutaj powtarzał, aczkolwiek dodałem kilka istotnych detali:
 
-Wszystkie z tych zabezpieczeń **muszą** być wdrożone po stronie programistycznej, a agent powinien jedynie otrzymywać informację o błędach oraz dalsze wskazówki.
+- **Kontekst:** obejmuje dodatkowe informacje na temat dostępnych narzędzi oraz agentów, a także metadanych na temat przypisanych do agenta struktur "cyfrowego ogrodu". Poza tym mamy także podstawowe metadane, takie jak "bieżąca data". Jest tam także przestrzeń na rozbudowanie tych informacji o dane pochodzące z otoczenia.
+- **Code Mode:** gdy sandbox jest aktywny, agent będzie posługiwał się narzędziami poprzez **pisanie i wykonywanie** kodu. Oznacza to, że definicje narzędzi **nie będą** wczytywane na początku do kontekstu. To ustawienie można kontrolować na poziomie agenta, więc wyspecjalizowany agent, posiadający małą liczbę narzędzi, prawdopodobnie powinien mieć je w kontekście od razu.
+- **Referencje:** agenci przekazując pliki między sobą bądź przy wywołaniu narzędzi, stosują referencje. Jest to technika, którą omawialiśmy we wcześniejszych lekcjach. Tutaj została także wykorzystana w mechanizmach generowania i edycji obrazów oraz została połączona z sandboxem i systemem plików. Możemy więc poprosić agenta o to, aby inny agent wygenerował obrazek i mu go przekazał, a następnie agent nadrzędny może na przykład nałożyć na niego nasze logo / znak wodny i opublikować w cyfrowym ogrodzie.
+- **Dodatkowe zdarzenia:** w logice pojawiły się też nowe zdarzenia, ukierunkowane na obsługę błędów oraz informowanie o statusie wątków realizowanych w tle.
 
-## Formaty prezentowania zewnętrznych treści w kontekście
+Poniżej dołączam jeszcze schemat głównej logiki, który odzwierciedla zmiany związane z budowaniem kontekstu, zdarzeniami oraz komunikacją client - server.
 
-Połączenie z zewnętrzną bazą wiedzy opiera się o narzędzia umożliwiające agentowi przeszukanie jej treści. Oznacza to, że informacje trafiają do kontekstu w formie **wyników działania narzędzi**, a więc wszystkie techniki omówione w lekcjach S01E02 oraz S01E03 również tutaj obowiązują.
+![Koncepcje](https://cloud.overment.com/ai_devs_4_mechanics-1775671510.png)
 
-Nawigowanie po bazie wiedzy zwykle opiera się o dwa narzędzia: **search** i **read**, czyli analogicznie jak w omawianym [Files MCP](https://github.com/iceener/files-stdio-mcp-server). Różnica polega na tym, że agent nie będzie posiadać bezpośredniego wglądu w zawartość oryginalnych dokumentów. Jeśli więc przetwarzamy raport zawierający wykresy czy zrzuty ekranów, agent może mieć problem z ich zrozumieniem. Wówczas może okazać się uzasadnione przedstawienie dokumentu w formie **obrazu**. Co więcej, publikacja na temat [DeepSeek-OCR](https://deepseek.ai/blog/deepseek-ocr-context-compression/) sugeruje, że wizualna forma może być świetna nawet dla treści w pełni tekstowych, ponieważ pozwala osiągnąć nawet 9-10x lepszą kompresję przy zachowaniu nawet 96% precyzji!
+Całość aplikacji przygotowałem też z myślą o publikacji na produkcji, ale jest kilka wyjątków:
 
-![Przetwarzanie informacji w oparciu o tekst i obraz](https://cloud.overment.com/2026-02-09/ai_devs_4_text_image-78dadbe3-5.png)
+- **STDIO:** interfejs nadal umożliwia rejestrowanie serwerów STDIO, co w produkcyjnej aplikacji webowej nie może być dostępne o ile nie mówimy o aplikacji **desktopowej**, która posiada bezpośredni kontakt z komputerem użytkownikia.
+- **Sandbox:** aplikacja posiada dwa rodzaje sandboxów, aby zaprezentować taką możliwość. Na produkcji możliwe są scenariusze w których będziemy mieć więcej niż jeden sandbox, ponieważ np. **just-bash** powinien wystarczyć nam do nawigacji w systemie plików, a **lo** do wykonywania kodu na potrzeby MCP. Natomiast w każdej innej sytuacji będziemy potrzebowali albo sandboxa Deno, albo Daytona (lub alternatyw dla nich).
+- **Uprawnienia:** choć aplikacja pozwala na zarządzanie uprawnieniami dostępu do systemu plików, sandbox jest dość solidnie skonfigurowany, a wywołania narzędzi poza trybem Code Mode wymagają potwierdzenia, tak przed publikacją, musielibyśmy przeprowadzić jeszcze dodatkowe weryfikacje, czy na pewno wszystko jest tam na swoim miejscu.
+- **Detale:** wciąż mówimy tutaj o przykładzie stworzonym na potrzeby tej lekcji. Mogą więc pojawić się w nim różne niedopatrzenia oraz błędy, aczkolwiek starałem się, aby było ich możliwie jak najmniej, by ta aplikacja mogła stanowić punkt odniesienia dla tworzenia własnych projektów.
 
-Zresztą nawet w przypadku dokumentów markdown, dodanie ich treści do kontekstu konwersacji nie zawsze jest oczywiste. Wystarczy, że w ich treści znajdują się zdjęcia, które w dokumencie mają formę `! [ tekst alternatywny ]( link_do_pliku )` . Aby model był w stanie zobaczyć te obrazy, musimy wydobyć je z treści przez wyrażenia regularne, a następnie przesłać zgodnie z wymaganiami struktury zapytania.
+Poza tym, wciąż mamy tutaj system pozwalający na zarządzanie kontami użytkowników, grupowanie ich w ramach organizacji oraz pozwalający na współdzielenie zasobów pomiędzy nimi. Inaczej mówiąc - bardzo solidne fundamenty, a nawet więcej, do dalszego budowania.
 
-![](https://cloud.overment.com/2026-02-09/ai_devs_4_markdown-432d3438-8.png)
+## Konfiguracja
 
-Przy okazji łączenia agentów z systemem plików widzieliśmy, jak istotne jest informowanie modelu o tym, **w którym miejscu pliku** znajduje się dany fragment, oraz w ogóle, z jakiego dokumentu pochodzi. W przypadku baz wiedzy wymagających indeksowania również jest to istotne, ale powinno obejmować nie tylko informacje o odnalezionym chunku, lecz także o źródle jego pochodzenia. Ma to znaczenie nie tylko z punktu widzenia modelu, ale także **interfejsu użytkownika**, ponieważ odnośniki, a nawet cytaty z oryginalnych źródeł, mogą zostać wyświetlone obok wypowiedzi agenta albo programistycznie dodane, na przykład do treści generowanego raportu.
+Samo uruchomienie projektu w celu nawiązania interakcji z agentem, wymaga:
 
-![Przykład połączenia odnalezionych fragmentów ze źródłem](https://cloud.overment.com/2026-02-09/ai_devs_4_presentation-71341bdc-e.png)
+1. Uruchomienie instalatora przez **npm run setup**
+2. Przejście przez poszczególne pytania w celu ustawienia konta oraz zapisania kluczy dla OpenAI / OpenRouter / Gemini (wystarczy tylko jeden) oraz
+3. Po podaniu informacji system wygeneruje początkowe rekordy w bazie danych oraz uzupełni plik .env podanymi wartościami w katalogu **apps/server/.env**
+4. Uruchomienie serwera poprzez **npm run dev** i przejście na stronę **http://localhost:5173/ai/**
 
-Widzimy zatem, że sposób prezentacji treści dokumentów w kontekście konwersacji nie opiera się wyłącznie na dołączeniu ich zawartości tekstowej. Forma wizualna oraz odnośniki do źródeł są równie ważne zarówno dla modelu, jak i dla użytkownika.
+Cały proces konfiguracji wygląda następująco:
 
-## Techniki indeksowania treści na potrzeby wyszukiwania
+![](https://cloud.overment.com/2026-04-09/ai_devs_4_setup-a65fb6cf-e.png)
 
-Proces wyszukiwania jest fundamentalnym elementem koncepcji łączenia modelu językowego z zewnętrznymi źródłami wiedzy. Obecnie za wyszukiwanie niemal zawsze odpowiadają agenci (Agentic RAG), posługując się narzędziami wyszukiwawczymi lub nawet pełnoprawnymi silnikami wyszukiwania, na przykład [Algolia](https://algolia.com/) lub [Qdrant](https://qdrant.tech/).
+Poza instalacją można także skonfigurować **sandbox "lo"** oraz dostęp do przeglądarki **"kernel"**. Proces ten opisany jest w README. Nie jest to jednak konieczne, ponieważ domyślnie system posiada dostęp do sandbox'a Node.js.
 
-Powiedzieliśmy już, że indeksowanie polega na podziale treści na mniejsze fragmenty (chunki/dokumenty), składające się z głównej **zawartości** oraz **metadanych** opisujących dany dokument. Długość pojedynczego dokumentu rzadko przekracza 200–500 słów lub 500-4000 tokenów. Dzięki temu podczas procesu wyszukiwania **zapytanie** użytkownika może zostać precyzyjnie **dopasowane** do ich treści albo na podstawie zapisu (full-text lub fuzzy-search) albo poprzez dopasowanie **znaczeniowe** (tzw. semantic search).
+System wygeneruje także początkowy "cyfrowy ogród" o nazwie **Wonderlands** dostępny pod adresem: http://localhost:5173/wonderlands oraz domyślnego agenta z którym ta przestrzeń będzie związana (możemy to zmienić w ustawieniach). Także od razu będziemy mogli poprosić o zapisanie nowej notatki, a ta zostanie opublikowana na stronie. Sam system plików znajduje się w katalogu: `apps/server/var/workspaces/ {tenant_id}/{account_id}`, o ile nie zmienimy tej ścieżki w pliku .env. Folder ten możemy także otworzyć w aplikacji **[Obsidian](https://obsidian.md/)** i z jej pomocą również zarządzać notatkami.
 
-Tutaj pojawia się pytanie z nieoczywistą odpowiedzią, czyli: **"w jaki sposób tworzyć dokumenty?"**, które koniecznie musi uwzględniać także: **"w jaki sposób agent będzie do nich docierał?"**. Pod uwagę możemy wziąć rzeczy takie jak:
+Aplikacja posiada także workflow **Github Actions**, więc możemy przejść przez proces z lekcji **S05E01** albo we własnym zakresie skonfigurować tę aplikację na swoim serwerze. W ten sposób API będzie dostępne zdalnie, a nasi agenci będą mogli otrzymywać zadania i realizować je w tle.
 
-1. **Znaki:** to podział według liczby znaków, przydatny przy nieustrukturyzowanej treści
-2. **Separatory:** to podział według separatorów (np. nagłówków), zwykle wykonywany rekurencyjnie (nagłówki -> akapity -> zdania -> znaki) w celu osiągnięcia podobnej długości dokumentów.
-3. **Kontekst:** uwzględnia wzbogacanie fragmentów z pomocą LLM, poprzez generowanie dla nich kontekstu na podstawie otaczających fragmentów, bądź nawet treści całego dokumentu. Technika została przedstawiona przez [Anthropic](https://www.anthropic.com/engineering/contextual-retrieval).
-4. **Tematyka:** uwzględnia pełne wykorzystanie modelu (bądź nawet agentów) do generowania fragmentów od podstaw na podstawie treści dokumentu.
+## Narzędzia
 
-Poza strategią podziału istotna jest także struktura metadanych, która będzie uzależniona od sposobu generowania dokumentów. W dwóch pierwszych przypadkach (podział względem znaków i separatorów) do dyspozycji mamy jedynie wartości określone programistycznie (np. ścieżki, nazwy sekcji). W dwóch pozostałych (podział kontekstowy i tematyczny) w grę wchodzi także generowanie list słów kluczowych bądź tagów.
+Jak wspomniałem, system wspiera narzędzia natywne oraz MCP. Posiada także możliwość uruchamiania kodu, więc w ramach notatek przechowywanych w "Cyfrowym Ogrodzie" możemy mieć "umiejętności" obejmujące instrukcje tekstowe oraz skrypty.
 
-![Strategie podziału treści na potrzeby indeksów wyszukiwania](https://cloud.overment.com/2026-02-09/ai_devs_4_chunking_strategies-bd01a46c-a.png)
+Zatem możliwości agentów będą zależały od **narzędzi**. Tutaj główną rolę będzie odgrywać MCP, ale stosowanie CLI również jest możliwe (choć bardziej sprawdzi się w kontekście lokalnym, gdy będziemy jedynymi użytkownikami aplikacji). Potrzebujemy więc określić, jakie integracje w ogóle chcemy podłączyć i odpowiedź na to pytanie będzie bardzo indywidualna, dlatego przejdziemy sobie przez narzędzia, które sam stosuję.
 
-Przykładowe implementacje powyższych strategii znajdują się w przykładzie **02\_02\_chunking**. Oczywiście ich logika zwykle będzie musiała być dostosowana do rodzaju dokumentów oraz wymagań systemu, ale wyraźnie widać tutaj różne kierunki.
+- **Linear:** ([kod źródłowy](https://github.com/iceener/linear-streamable-mcp-server)) czyli integracja z jednym z najlepszych systemów zarządzania zadaniami, szczególnie w kontekście zespołowym. Natomiast teraz również agenci mogą umieszczać w nim swoje zadania oraz komunikować się z nami.
+- **Google Calendar**: ([kod źródłowy](https://github.com/iceener/google-calendar-streamable-mcp-server)) to zestaw narzędzi do pracy z Google Calendar. Tutaj agenci również mogą mieć swój kalendarz określający na przykład harmonogram ich pracy. Poza tym będą mogli także zarządzać naszą dostępnością, co bywa przydatne w kontekście pozostałych integracji (np. Gmail).
+- **Gmail:** ([kod źródłowy](https://github.com/iceener/gmail-streamable-mcp-server)) pełen dostęp do skrzynki e-mail nie jest zbyt dobrym pomysłem, ale możliwość odczytywania wyłącznie wybranych etykiet bądź tworzenie szkiców dla powtarzalnych maili może być przydatne.
+- **Maps:** ([kod źródłowy](https://github.com/iceener/maps-streamable-mcp-server)) daje dostęp do Google Maps, co przydaje się do planowania tras oraz pobierania informacji o miejscach, które chcemy odwiedzić. Jest szczególnie użyteczne w terenie i przy pracy z aplikację mobilną. Świetnie łączy się także z Google Calendar.
+- **Replicate:** ([kod źródłowy](https://github.com/iceener/replicate-streamable-mcp-server)) to serwer MCP do interakcji z modelami do generowania obrazów dostępnymi w ramach platformy Replicate. Sprawdza się świetnie jako alternatywa dla natywnego generowania obrazów przez API Gemini / OpenAI.
+- **Resend:** ([kod źródłowy](https://github.com/iceener/resend-streamable-mcp-server)) to serwer który pojawiał się już w lekcjach. Może być wykorzystywany przede wszystkim w celu wysyłania prywatnych newsletterów opracowanych przez agentów.
+- **ElevenLabs:** ([kod źródłowy](https://github.com/iceener/elevenlabs-streamable-mcp-server)): generowanie dłuższych form audio może sprawdzić się w kontekście opracowania regularnych aktualizacji czy prywatnych podcastów utworzonych na podstawie zgromadzonych treści. ElevenLabs ma także świetne modele Speech to Text, co z kolei jest przydatne przy notowaniu bądź głosowej interakcji z agentami.
+- **YouTube:** ([kod źródłowy](https://github.com/iceener/youtube-streamable-mcp-server)): YouTube wciąż pozostaje jednym z lepszych źródeł informacji w kontekście m.in. technologii. Ten serwer pozwala na przeszukiwanie bądź obserwowanie wybranych kanałów, co w połączeniu z analizą wideo Gemini pozwala na docieranie do najbardziej wartościowych treści.
+- **Firecrawl:** ([kod źródłowy](https://github.com/iceener/firecrawl-streamable-mcp-server)): pomimo tego, że opcja przeszukiwania Internetu jest dostępna natywnie w API, tak tutaj mamy bardzo dużą kontrolę nad wczytywaniem treści wybranych stron www. Dodatkowo Firecrawl w tym zakresie można uruchomić lokalnie, bez konieczności wykupienia subskrypcji.
+- **Video:** ([kod źródłowy](https://github.com/iceener/video-stdio-mcp)) to prosty serwer MCP umożliwiający analizowanie materiałów wideo z pomocą API Gemini. Sprawdzi się jednak jedynie w przypadku krótszych materiałów, nieprzekraczających dopuszczalnych limitów.
+- **Spotify** ([kod źródłowy](https://github.com/iceener/spotify-streamable-mcp-server)): świetnie sprawdza się do tworzenia playlist oraz głosowego uruchamiania muzyki bez konieczności podawania konkretnych tytułów, lecz np. "soundtrack z filmu...".
 
-## Silniki wyszukiwania, bazy wektorowe i pluginy
+Wymienione powyżej serwery MCP opierają się o szablon, który omawialiśmy w pierwszym tygodniu AI_devs, zatem ich uruchomienie wygląda dokładnie tak samo. Różnice występują tylko na poziomie konfiguracji OAuth lub dostarczenia kluczy API. Tutaj jednak wystarczy poprosić swojego agenta do kodowania, aby przeprowadził nas przez proces (np. w https://console.developers.google.com).
 
-Fundamentalnym elementem systemów RAG jest proces wyszukiwania, który może być przeprowadzony na wiele sposobów. Praca z systemem plików pokazała nam, że nawet proste narzędzia CLI bądź MCP mogą relatywnie skutecznie eksplorować treści. Jednak w kontekście systemów RAG często wymieniane są także pełnoprawne silniki wyszukiwania (np. [Elasticsearch](https://www.elastic.co/elasticsearch)), bazy wektorowe (np. [Qdrant](https://qdrant.tech/)) oraz bazy grafowe (np. [Neo4j](https://neo4j.com/)).
+Poza tymi serwerami, sam posiadam także kilka prywatnych, których nie ma sensu tutaj udostępniać. Skupiają się one na moich wewnętrznych procesach oraz integracji z urządzeniami, które posiadam w domu. Wyjątek stanowi Tesla MCP ([kod źródłowy](https://github.com/iceener/tesla-streamable-mcp-server)). Sam proces tworzenia takich serwerów również już omawialiśmy, a na podstawie udostępnionego przeze mnie [szablonu](https://github.com/iceener/streamable-mcp-server-template) opracowanie kolejnych nie powinno stanowić problemu.
 
-Już teraz widzimy, że sięganie po te wszystkie systemy **nie jest konieczne** i będzie mocno uzależnione od skali projektu oraz naszych wymagań. Bo jeżeli baza wiedzy opiera się wyłącznie o pliki markdown, a agent działa na skali wewnętrznych procesów średniej wielkości organizacji, to prawdopodobnie wystarczy nam agent bezpośrednio połączony z systemem plików.
+W czwartym tygodniu AI_Devs przechodziliśmy przez wątki związane z wdrożeniami AI, uzyskiwaniem dostępu do API narzędzi, z których korzystamy na co dzień, oraz dobieraniem ich w taki sposób, aby mieć możliwie duże możliwości konfiguracji pod kątem agentów AI. Mając system agentowy taki jak ten, który właśnie omawiamy, wartość płynąca z dostępności API jest jeszcze większa.
 
-Może się też okazać, że system plików nie będzie wystarczający, a dane użytkowników są przechowywane w bazie danych, np. SQLite bądź postgreSQL. To również nie oznacza, że nie możemy skorzystać z rozszerzeń do wyszukiwania pełnotekstowego (np. [FTS5](https://www.sqlite.org/fts5.html)) czy nawet rozszerzeń do wyszukiwania semantycznego (np. [sqlite-vec](https://github.com/asg017/sqlite-vec)). Oczywiście trudno jest bezpośrednio porównać stosowanie rozszerzeń z pełnoprawnym systemem, ale nierzadko niższa złożoność architektury będzie wystarczającym uzasadnieniem. W końcu w takiej sytuacji niemal wszystkie dane znajdują się w jednej bazie, co znacznie ułatwia pracę z nimi.
+## Możliwe zastosowania
 
-Dopiero w momencie, gdy mamy istotny powód do sięgnięcia po dedykowane rozwiązania, wybieramy pełnoprawny silnik wyszukiwania. Co ciekawe, jeszcze kilka miesięcy temu dość rozsądne było budowanie tzw. "hybrydowych systemów RAG" wykorzystujących zarówno wyszukiwanie leksykalne (np. full-text) jak i semantyczne. Obecnie już raczej nie musimy podejmować takiej decyzji, ponieważ większość platform oferuje już **obie opcje** i to w raczej rozbudowanych formach. Natomiast nadal, jeśli zdecydujemy się na integrację np. z Elasticsearch, to konieczne będzie dodanie **synchronizacji** pomiędzy indeksem wyszukiwania, a naszą bazą danych.
+Samo podłączenie narzędzi do agentów nie wnosi zbyt dużo wartości, jeśli nie mamy na to konkretnego pomysłu. Bo samo podłączenie **Google Calendar** po to, aby zapytać o dodanie nowego wpisu jest mniej skuteczne niż zrobienie tego ręcznie. Oczywiście są pewne wyjątki, takie jak kontekst **interfejsów głosowych**.
 
-Poniżej widzimy porównanie trzech wariantów systemów RAG, co wyraźnie pokazuje jak rośnie złożoność systemu (ale też możliwości) w zależności od doboru komponentów.
+Użyteczność narzędzi zwiększa się, gdy **spersonalizujemy** sposób ich użycia poprzez **opisy procesów** bądź **procedury**, a niekiedy także **skrypty**. Przykłady takich zastosowań omawialiśmy między innymi w lekcji **S02E03** przy okazji przykładu prywatnego newslettera, który był generowany na podstawie danych zgromadzonych przez różnych agentów.
 
-![Prezentacja złożoności systemów RAG](https://cloud.overment.com/2026-02-09/ai_devs_4_rag_systems-b8c1d4d1-a.png)
+W przypadku systemu, który mamy teraz, takie rozszerzanie narzędzi może odbywać się poprzez dokumenty zapisane w **cyfrowym ogrodzie**. Oznacza to, że będziemy mieć pełny dostęp do tego, **jakie umiejętności posiadają agenci**, a także **jak wygląda postęp prac** nad wybranymi aktywnościami. Co więcej, będziemy mogli też łatwo wrócić do wcześniej zapisanych informacji. Tylko ten jeden schemat można zastosować w wielu obszarach naszej codzienności - **nauce, treningach, pracy, hobby, research'u** czy procesach, które odbywają się niemal całkowicie w tle bez naszego aktywnego zaangażowania, np. **klasyfikacji zgłoszeń, wiadomości czy archiwizacji danych**.
 
-## Przeszukiwanie semantyczne i wybór modelu do embeddingu
+Poniżej mamy schemat, który wprost możemy przełożyć na system, jedynie poprzez utworzenie agentów oraz podłączenie do nich wskazanych serwerów MCP. Agenci będą musieli zostać wywołani **cyklicznie** z wiadomościami, które będą kierować ich do wskazanych plików opisujących **element procesu**, np.:
 
-**Wyszukiwanie semantyczne** (znaczeniowe) zostało wspomniane już kilkukrotnie, więc teraz przyjrzymy się czym dokładnie jest oraz jak uzupełnia wyszukiwanie pełnotekstowe.
+- Agent **Calendar**: ma zgromadzić wydarzenia z nadchodzącego dnia oraz kluczowe wydarzenia z kolejnych dni
+- Agent **Tasks:** ma zebrać wpisy z ostatnich dni, które nie zostały ukończone oraz te, które są aktywne bądź dopiero nadchodzą.
+- Agent **Mail**: ma zgromadzić informacje o kluczowych powiadomieniach bądź wiadomościach, którymi musimy zająć się w pierwszej kolejności
+- Agent **Newsfeed**: ma zapisać informacje, które spełniają nasze kryteria pod kątem ważności bądź też zestawić je z wiadomościami, które docierały do nas w ostatnich dniach.
+- Tak zebrane informacje trafiają do jednego folderu, gdzie przejmuje je agent odpowiedzialny za opracowanie transkryptu oraz wygenerowanie wersji audio, która trafi na nasze urządzenie mobilne (może to być nawet wiadomość na komunikator obsługujący załączniki audio).
 
-Poza modelami językowymi mamy do dyspozycji również modele zdolne do **opisywania znaczenia** treści, na przykład słów lub fragmentów tekstu. To znaczenie zapisuje się za pomocą tzw. **embeddingu**, czyli tablicy liczb zawierającej wektory wyrażone w postaci liczb. Następnie w procesie wyszukiwania, zapytanie użytkownika również zostaje zamienione na embedding, co pozwala nam **porównać wektory** i określić w ten sposób **jak duże podobieństwo znaczeniowe** występuje pomiędzy zapytaniem, a naszą bazą wiedzy.
+![Ops](https://cloud.overment.com/2026-04-09/ai_devs_daily_ops-4479c72d-c.png)
 
-Poniżej mamy schemat prezentujący **dwa odrębne procesy**, czyli **indeksowanie** oraz **wyszukiwanie**. Pierwszy etap realizowany jest w tle, w momencie dodawania bądź aktualizowania dokumentów. Natomiast drugi ma miejsce w chwili, gdy agent korzysta z narzędzi do przeszukiwania bazy. Widzimy więc jak porównanie podobieństwa znaczeniowego (tutaj jest to **Cosine Similarity**) pozwala odnaleźć **zbliżone** treści.
+System nie posiada obecnie wbudowanego systemu planowania zadań, więc albo można go wygenerować we własnym zakresie, albo skorzystać z dowolnego rozwiązania, które cyklicznie będzie przesyłać do naszego systemu takie oto zapytania:
 
-![Schemat wyszukiwania semantycznego](https://cloud.overment.com/2026-02-09/ai_devs_4_semantic_search-4ea76977-c.png)
+```
+curl -X POST http://127.0.0.1:3000/v1/sessions/bootstrap \
+    -H "Authorization: Bearer sk_local_API_TOKEN" \
+    -H "X-Tenant-Id: ten_TENANT_ID" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "initialMessage": "Hello!",
+      "target": {
+        "kind": "agent",
+        "agentId": "agt_alice_AGENT_ID"
+      }
+    }'
+```
 
-Aby wygenerować embedding, potrzebujemy model zdolny do jego utworzenia. Ranking aktualnie najlepszych modeli [znajduje się na stronie Huggingface](https://huggingface.co/spaces/mteb/leaderboard), natomiast w naszym przypadku skorzystamy z modelu **Text Embedding 3 Small** od OpenAI. Przy wyborze modelu do embeddingu, będzie interesować nas:
+Mówimy więc o **uruchomieniu sesji** osadzonej w kontekście wskazanego użytkownika oraz **agenta**. Takie zapytanie zostanie zrealizowane w tle, ale nasz system wyświetli je na liście konwersacji. Zatem w przypadku, gdy jakaś akcja będzie wymagała naszej interwencji, to zobaczymy ją w tzw. "Activity Bar".
 
-- wielkość modelu (określa cenę bądź wymagania sprzętowe)
-- liczba generowanych wymiarów (dla text-embedding-3-small wartość ta to **1536**)
-- okno kontekstowe (określa dopuszczalną ilość treści, które przetwarza model)
-- zakres danych (knowledge cutoff) oraz np. skuteczność pracy z wieloma językami
+Zadania uruchamiane w tle mogą być pogrupowane czasowo, bez zbędnego budowania zależności. Przykładowo jeśli osobisty newsletter ma być przesłany o 5:01, to agenci odpowiedzialni za zgromadzenie informacji powinni zostać wywołani przynajmniej godzinę wcześniej i to **równolegle**, ponieważ i tak nie będą wchodzić sobie w drogę.
 
-Jak widać, modele do embeddingu, obowiązują podobne zasady jak modele z którymi pracowaliśmy do tej pory. Zatem jeśli jakieś informacje **nie znajdują się w danych treningowych**, to model **nie będzie w stanie poprawnie opisać ich znaczenia**.
+W celu organizacji tego systemu, polecam wrócić do lekcji z czwartego tygodnia, np. związanych z budowaniem procesów dla **bezpośredniej** oraz **asynchronicznej** pracy z agentami, a także rozwijania własnej bazy wiedzy. Chociażby poniższa wizualizacja z lekcji **S04E04** może stanowić bardzo interesujący punkt startowy.
 
-W przykładzie **02\_02\_embedding** znajduje się prosty skrypt, którego zadaniem jest zamiana naszych wiadomości na embedding. Po wpisaniu czegokolwiek zawsze otrzymamy tablicę o tej samej długości, **ale z innymi wartościami**. Z kolei gdy wpiszemy to samo, **wartości powinny pozostać takie same**, ponieważ nie zmienia się znaczenie danej treści.
+![Przykład struktury bazy wiedzy](https://cloud.overment.com/2026-04-09/ai_devs_4_knowledge_structure-41f3bac5-6-8bca1647-b.png)
 
-Dodatkowo każde kolejne zapytanie będzie **porównane** z poprzednimi, określając ich podobieństwo znaczeniowe przez co **Kobieta** będzie bliżej **Królowej** niż **Króla**, a **Mężczyzna** odwrotnie - bliżej **Króla** niż **Królowej**, ponieważ z punktu widzenia znaczenia tych słów, są one bardziej powiązane.
+W praktyce jednak, takich struktur raczej nie buduje się "w jeden wieczór", więc warto zacząć od czegoś prostego. Jeśli dziś, po uruchomieniu projektu sprawimy, że agenci zaczną realizować dla nas **jeden powtarzalny proces**, to będzie można to określić mianem sukcesu.
 
-![Porównanie podobieństwa znaczeniowego słów Woman, Man, Queen, King, LLM](https://cloud.overment.com/2026-02-10/ai_devs_4_cosine_similarity-2431f48a-c.png)
+## Współpraca z agentem
 
-Widzimy też, że znaczenie tych słów zostało poprawnie opisane, nawet pomimo tego, że nie ma między nimi dopasowania na poziomie zapisu czy słów kluczowych. To właśnie z tego powodu stosuje się **hybrydowe** wyszukiwanie, które zwykle łączy zalety wyszukiwania leksykalnego ze znaczeniowym.
+Domyślnie, oczekiwania wobec agentów AI są mocno wygórowane. Objawia się to na różne sposoby, ale przede wszystkim ma **bezpośredni wpływ na działanie systemu**, ponieważ:
 
-## Techniki przeszukiwania oraz wczytywania kontekstu (retrieval)
+- nasze instrukcje są zbyt ogólne, bo zakładamy, że agent "domyśli się" o co nam chodzi
+- zakładamy, że system działa zgodnie z teoretycznymi wymaganiami, np. że dotarcie do właściwych plików oraz sposób obsługi narzędzi będzie bezbłędny
+- zakładamy, że po drodze wszystko pójdzie zgodnie z planem, a w razie błędów system będzie w stanie samodzielnie poradzić sobie z problemami
+- oczekujemy, że jakość dostarczonych treści będzie pozbawiona błędów oraz zgodna z naszymi założeniami i to nawet wtedy, jeśli ich nie doprecyzowaliśmy
+- chcemy, aby zadania były wykonane możliwie szybko, ale zainwestujemy wystarczająco dużo czasu w opracowanie oraz weryfikację procesów
+- oczekujemy, aby system działał w sposób stabilny i przewidywalny, a prompty były wykonywane deterministycznie, niczym kod - linia po linii.
 
-Połączmy teraz to wszystko w całość: **przygotowanie dokumentów**, **indeksowanie**, oraz **połączone techniki wyszukiwania**, co da nam hybrydowy RAG w postaci agenta wyposażonego w narzędzie **search**.
+Oczywiście nie twierdzę, że każdy tak ma, ale nawet jeśli tylko część z powyższych punktów ma przełożenie na naszą współpracę z AI, to prawdopodobnie rozczarujemy się działaniem agentów lub jedynie na początku będziemy zadowoleni z jakości ich pracy.
 
-Przykład **02\_02\_hybrid\_rag** po uruchomieniu skanuje katalog **workspace** pod kątem plików tekstowych. Pliki dzielone są na fragmenty, a te synchronizowane z bazą SQLite z rozszerzeniami FTS i sqlite-vec.
+Dodatkowe ograniczenia w pracy z agentami biorą się również z próby **przełożenia starych procesów w nową rzeczywistość** oraz związana z tym "niewystarczająca" kreatywność. Bo jeśli naturalnie nasze myśli będą kierowały się wyłącznie w stronę rzeczy, które już znamy, to pozostanie nam mało przestrzeni na nowe możliwości.
 
-> **Uwaga:** przy konfiguracji sqlite-vec w pliku **src/db/index.js** pojawia się ustawienie **EMBEDDING\_DIM** określające liczbę wymiarów dla danego indeksu. Wartość ta **musi być dokładnie taka sama** jak liczba wymiarów **generowanych przez model**. W naszym przypadku jest to 1536.
+Przekładając to na praktykę:
 
-Mamy więc tu do dyspozycji zarówno wyszukiwanie pełnotekstowe, jak i semantyczne. Agent po zadaniu pytania przygotowuje **dwa rodzaje zapytania** w formie **listy słów kluczowych** oraz **pytania w języku naturalnym**. Prowadzi to do otrzymania **dwóch list wyników**, które zostają ze sobą połączone przez RRF (eng. Reciprocal Rank Fusion; [świetny wpis na ten temat](https://medium.com/@devalshah1619/mathematical-intuition-behind-reciprocal-rank-fusion-rrf-explained-in-2-mins-002df0cc5e2a)) .
+- prosząc agenta o **zapisanie informacji w pliku** możemy skorzystać z "#" w celu wywołania palety umożliwiającej wskazanie konkretnej ścieżki, dzięki której agent dotrze do niego natychmiast
+- pisząc wiadomość uruchamianą automatycznie w wyniku np. wyzwalacza czasowego, możemy doprecyzować zadanie, wskazując konkretne pliki oraz nazwy narzędzi, których agent powinien użyć. Wystarczą nawet kategorie narzędzi bądź foldery - wszystko to, co nakieruje agenta na poprawne rozwiązanie
+- wszystkie interakcje z agentami, nawet pomimo posiadania logiki kompresji kontekstu, powinny być utrzymywane **tak krótkie, jak to możliwe**. Przełoży się to nie tylko na skuteczność, ale także na mniejsze koszty, ponieważ w pracy z własnymi agentami będziemy płacić za **zużyte tokeny**, a to generuje znacznie większe rachunki, niż plan subskrypcyjny w Claude Code.
+- opisy workflow / skilli realizowane przez agentów powinny pozostawać bardzo proste. Ciągle powinniśmy mieć na uwadze ograniczoną zdolność modeli do utrzymania uwagi oraz podążania za instrukcjami. Jednocześnie poszczególne notatki mogą się ze sobą **łączyć**, przez co agent może je stopniowo odkrywać, skupiając się jedynie na najważniejszych wątkach.
 
-![Architektura hybrydowego systemu RAG](https://cloud.overment.com/2026-02-10/ai_devs_4_hybrid_rag-518a72b9-6.png)
+![Różnice w interakcji](https://cloud.overment.com/2026-04-10/ai_devs_4_instruct-097c1d5b-0.png)
 
-Przyjrzymy się temu nieco bliżej. Gdy zadamy pytanie "**Czym jest autoregresja?**" w języku polskim, to agent domyślnie utworzy zapytania w tym samym języku. W związku z tym, że oryginalny tekst jest po angielsku, to szansa na dopasowanie słów kluczowych jest bardzo niska. Jednak model wykorzystywany do embedding'u posiada wsparcie dla **obu języków** przez co dopasowanie znaczeniowe nadal tu działa.
+Dopracowanie instrukcji agentów oraz poleceń wysyłanych do nich w tle to zwykle **jednorazowy wysiłek**, który z dużym prawdopodobieństwem będzie zwracał nam się **wielokrotnie**. Warto więc poświęcić temu trochę uwagi.
 
-Następnie dokumenty, które trafiły do wyników wyszukiwania, są ze sobą porównywane pod kątem zajmowanej pozycji. Dzięki RRF dokumenty, które pojawiły się wyżej na liście "FTS" ale nisko na liście "Semantic" mogą awansować na wyższą pozycję w ostatecznym rankingu. Podobnie działa to w drugą stronę.
+Sama jakość interakcji z agentem to jednak nie wszystko, ponieważ równie istotny jest **nawyk pracy z nim** oraz z treściami, które ten system będzie dla nas generował. Dość łatwo jest skonfigurować codziennie wysyłany newsletter, ale po co to robić, jeśli i tak w ogóle nie będziemy go czytać? Wyzwaniem nie jest nawet wygenerowanie serwerów MCP integrujących się z aplikacjami, z których korzystamy, ale to, że jeśli skorzystamy z nich tylko raz, z pewnością nie wniosą nam żadnej wartości.
 
-![](https://cloud.overment.com/2026-02-10/ai_devs_4_hybrid_search-0973eca1-0.png)
+Przy wyrabianiu nawyków najlepiej sprawdza się **dopasowanie naszego otoczenia** oraz łączenie nowych aktywności z tym, co już i tak robimy. Zatem, jeśli spędzamy czas na Discordzie, to tam powinny trafiać powiadomienia systemu. Z kolei, jeśli dużo czasu spędzamy na telefonie, uzasadnione będzie wygenerowanie nawet prostej aplikacji mobilnej albo utworzenie skrótu do strony www kierującej do naszego czatu. Natomiast jeśli rano trenujemy lub chodzimy na spacer, to w chwili wychodzenia z domu, na przykład gdy telefon rozłącza się z domową siecią Wi-Fi, powinniśmy wczytać nagranie audio wygenerowane przez system z przeglądem newsów z ostatniego dnia.
 
-Patrząc na powyższe przykłady, można zadać sobie pytanie o **różnicę** pomiędzy przeszukiwaniem treści z pomocą narzędzi CLI eksplorujących system plików, a wyszukiwaniem hybrydowym angażującym FTS oraz embedding. Leżą one głównie w tym, że:
+Jeśli tylko to zrobimy, to bez większego wysiłku agenci staną się częścią naszej codzienności, a my doświadczymy tytułowej **"Nowej Rzeczywistości"**.
 
-- wyszukiwanie hybrydowe może być zdecydowanie szybsze, ponieważ może być kontrolowane programistycznie. W naszym przypadku to agent generował zapytania, lecz równie dobrze moglibyśmy przesłać oryginalne zapytanie użytkownika i dotrzeć do właściwych dokumentów. Jednak odbywa się to kosztem skuteczności, ponieważ dotarcie do właściwych treści niemal zawsze będzie wymagać **"rozumowania"** a nie wyłącznie "**dopasowania**" słów kluczowych czy znaczenia. Istnieje też wyraźna różnica pomiędzy dokumentami **istotnymi** z punktu widzenia zapytania użytkownika, a "**podobnymi**"
-- wyszukiwanie hybrydowe może obejmować także treści multimodalne, na przykład obrazy. W przypadku narzędzi CLI bez wcześniejszego opisania obrazów będzie to utrudnione, a i tak nawet dokładne opisy mogą okazać się niewystarczające.
-- wyszukiwanie treści plików przez grep/ripgrep również może obejmować wsparcie dla wielu języków, ponieważ agent piszący zapytania, nie ma już problemów z tłumaczeniami
-- natomiast bezpośrednie wyszukiwanie treści plików przez grep/ripgrep, przede wszystkim nie wymaga etapu indeksowania, co w wielu przypadkach jest definitywną przewagą.
+## Rozwój projektu
 
-Widzimy zatem, że techniki przeszukiwania różnią się od siebie i z powodzeniem mogą być stosowane **równolegle**. Dlatego zamiast zastanawiać się, **"które z podejść jest najlepsze?"** lepiej zapytań **"które z tych podejść jest najlepsze dla problemu, który chcę rozwiązać?"**.
+Rozwój systemu agentowego może być ukierunkowany w stronę osobistych procesów, ale też obszarów wewnątrzfirmowych. W niektórych przypadkach może także stać się komercyjnym projektem, co miało miejsce u mnie. Możemy także zdecydować, czy chcemy rozwijać całą logikę od podstaw, czy opierać się o istniejącą, albo w ogóle skorzystać z gotowych rozwiązań. W kontekście rozwoju umiejętności z dużym prawdopodobieństwem budowanie wszystkiego na własnych zasadach wniesie nam najwięcej wartości, aczkolwiek nie jest to zupełnie oczywiste.
 
-## Główne wyzwania skuteczności RAG i zarządzania bazą wiedzy
+Trzeba jednak mieć na uwadze fakt, że mamy do dyspozycji coraz lepsze modele językowe i agentów do kodowania, więc dziś możemy osiągnąć **nieporównywalnie więcej**, niż jeszcze kilkanaście miesięcy temu. Projekt "Wonderlands", którego kod źródłowy udostępniłem, powstał na potrzeby naszych lekcji w ciągu zaledwie kilkunastu dni. Na jego opracowanie bez AI, potrzebowałbym zapewne kilku miesięcy. Choć jest to w 100% generowany kod, tak ilość pracy włożona w jego ukształtowanie jest absurdalna, nawet jeśli uwzględnimy zaangażowanie AI. Nie chodzi tu wyłącznie o czas włożony w sam projekt, ale fakt, że powstał on na podstawie moich doświadczeń z rozwoju podobnej aplikacji w ciągu 3 ostatnich lat.
 
-Niezależnie od tego, z jakich metod wyszukiwania skorzystamy, napotkamy różne wyzwania związane ze skutecznością systemów RAG. Przez RAG rozumiem tutaj nie tylko łączenie LLM z treścią plików, lecz także wszelkie sytuacje, w których model lub agent ma działać w oparciu o zewnętrzną wiedzę. Wyzwania te obejmują między innymi:
+Jeśli już zdecydujemy się na rozwój systemu agentowego, możemy rozważyć kilka obszarów, którymi możemy się zająć:
 
-- **Wiedza podstawowa:** jeśli informacja jest zawarta w wiedzy bazowej modelu, istnieje ryzyko, że agent nie zdecyduje się na przeszukanie naszych dokumentów. Mowa tu nie tylko o potencjalnie nieaktualnej wiedzy, ale także wieloznaczności terminów, które w naszym kontekście mogą znaczyć coś innego.
-- **Zakres wiedzy:** nawet na powyższych przykładach widzimy, że dotarcie do 100% informacji poprzez metody wyszukiwania jest bardzo trudne. Niekompletne wyniki są też trudne do zauważenia przez model, co łatwo prowadzi do halucynacji bądź przynajmniej niepełnych odpowiedzi.
-- **Świadomość informacji:** początkowo w kontekście modelu mogą znajdować się jedynie szczątkowe opisy dostępnych zasobów. Jest to niewystarczające do świadomego przeszukiwania bazy wiedzy.
-- **Kontekst:** Model domyślnie nie posiada informacji na temat naszego kontekstu, co utrudnia bądź uniemożliwia stworzenie skutecznych zapytań. Przykładowo, gdy zapytam o "moje projekty", agent nie będzie magicznie wiedział o AI\_devs i to nawet jeśli w treści dokumentów znajdzie się fraza "Adam współtworzy AI\_devs". Tutaj dopiero wyszukiwanie semantyczne miałoby szansę powiązać te informacje. Znacznie lepszą alternatywą byłby tutaj Graph RAG, czyli system wykorzystujący bazy grafowe.
-- **Format danych:** dane w formie obrazów, audio i wideo są znacznie trudniejsze w wyszukiwaniu niż tekst, a bardzo często pojawiają się wśród materiałów firmowych (filmy instruktażowe, notatki głosowe czy dokumenty zawierające wykresy i zdjęcia).
+- **Cron:** czyli system planowania zadań wyzwalanych czasowo. Ewentualnie możemy rozważyć rozwinięcie go o system nasłuchiwania na zewnętrzne zdarzenia.
+- **Otoczenie:** obecnie system nie posiada praktycznie żadnego kontaktu z otoczeniem w kontekście tego, co mówiliśmy w lekcjach **S04E03** czy **S03E05**. Dodanie tych informacji pozwoli agentom znacznie skuteczniej posługiwać się narzędziami oraz podejmować proaktywne działania.
+- **Wzmocnienie pętli:** główna logika agenta jest teraz sensownie obudowana mechanizmami kontrolowania postępów pracy oraz raportowania zdarzeń. Możemy jednak przyjrzeć się skuteczności wczytywania narzędzi oraz technikom związanym ze wznawianiem błędnie wywołanych narzędzi. Na przykład agent mógłby mieć możliwość skorzystania z tego samego payloadu narzędzia w sytuacji, gdy pierwsza próba się nie powiodła. To znaczy, gdy agent próbuje wysłać e-mail i tworzy jego treść, to w przypadku błędnego wywołania narzędzia musi wygenerować ją ponownie. Zamiast tego mógłby zmodyfikować istniejący payload.
+- **Głębsze integracje:** jeśli agent miałby być wykorzystywany lokalnie, to prawdopodobnie dobrym pomysłem byłoby udostępnienie mu lepszych uprawnień dostępu do naszego komputera. Oczywiście z zastrzeżeniem, że jeśli system jednocześnie byłby wystawiony na kontakt z otoczeniem, to rodziłoby to wyzwania z punktu widzenia bezpieczeństwa. Natomiast w niektórych konfiguracjach (np. odseparowanych agentów) mogłoby mieć to sens.
+- **Aplikacja mobilna:** połączenie głosowe z agentami poprzez natywną aplikację w zegarku bądź telefonie jest niezwykle użyteczne. Możliwość zadania pytania bądź poproszenia o przywołanie wiedzy z całego naszego "Cyfrowego Ogrodu" jest super przydatne.
+- **Panel zarządzania:** pomimo tego, że obecnie wątki, które realizowane są w tle wyświetlają się w minimalistycznej formie w Activity Bar, tak potencjalnie wartościowe mogłoby być utworzenie panelu wyświetlającego bieżące aktywności agentów. Taki panel warto jednak dobrze zaplanować, aby nie miał jedynie pasywnej formy i umożliwiał nam interakcję z nimi.
+- **Artefakty:** rozbudowanie interfejsu czatu o możliwość generowania dynamicznych artefaktów oraz ich zapisywania i przywoływania jest świetnym kandydatem na kolejne natywne narzędzie. Tutaj pomocny może być przykład z lekcji **S03E05**.
+- **Pamięć:** pomimo tego, że agent jest połączony z cyfrowym ogrodem, który może stanowić formę pamięci długoterminowej, uzasadnione byłoby wprowadzenie budowania profili agenta oraz użytkownika, które byłyby wczytywane częściowo statycznie, a częściowo dynamicznie w trakcie interakcji. Sama pamięć mogłaby miec także formę dedykowanych narzędzi dla agentów.
 
-Wszystkie z powyższych punktów obecnie prowadzą do wniosku, że **skuteczny system RAG musi zostać dopasowany do zakresu danych oraz ich formatów**. Oczywiście stworzenie nawet prostego skryptu zdolnego do nawigowania po dowolnych treściach jest możliwe, ale mówimy tutaj o osiągnięciu poziomu skuteczności, który sprawi, że system rzeczywiście wniesie nam realną wartość.
+Jak widać, nawet patrząc na pierwsze z brzegu możliwości, mamy tu całkiem sporo pracy do zrobienia. Jednocześnie każda z nich jest okazją, by nauczyć się czegoś nowego i odkrywać kolejne zastosowania agentów oraz tego, co potrafią modele generatywnej sztucznej inteligencji.
+
+## Podsumowanie
+
+Doszliśmy do końca AI_devs 4: Builders, więc przyszedł czas na **podziękowania** za ekstremalne zaangażowanie z Twojej strony. Materiał tego szkolenia **nie jest łatwy**, a główne treści lekcji opracowałem w taki sposób, aby zawierały **najlepsze możliwe techniki** projektowania systemów agentowych, które od teraz możesz zacząć wykorzystywać w swojej pracy. Ktoś mądry powiedział kiedyś, że **"satysfakcja płynie z robienia rzeczy trudnych, w które można się zaangażować"** - mam więc nadzieję, że w tej chwili właśnie takie emocje Ci teraz towarzyszą.
+
+AI_devs 4: Builders to szkolenie o **budowaniu**, więc publikacja ostatniej lekcji wcale nie oznacza, że nasza przygoda tutaj się kończy. Wprost przeciwnie: teraz warto wykorzystać wypracowane nawyki do projektowania i wdrażania rozwiązań AI oraz do pogłębiania swojej wiedzy.
+
+Obecnie w Internecie dużo mówi się o tym, że AI odbiera radość i satysfakcję z programowania. Coraz trudniejsze zadania agenci AI realizują praktycznie bez udziału człowieka i wydaje się, że wartość naszych umiejętności stale maleje. Mam jednak nadzieję, że doświadczenia z budowy agentów z ostatnich tygodni pokazały Ci **nową rzeczywistość**, w której nadal jest przestrzeń na podejmowanie nowych wyzwań, a nawet na osiąganie tego, co jeszcze jakiś czas temu leżało poza zasięgiem naszych kompetencji.
+
+Choć nie wiem, co przyniesie nam przyszłość oraz jak bardzo rozwinie się AI, sam jestem pełen entuzjazmu, który prawdopodobnie dało się zauważyć między literówkami (😜) w treściach lekcji. Dziś z pewnością możemy wybrać, czy chcemy delegować coraz więcej pracy agentom i wygodnie akceptować sugerowane przez AI zmiany w naszych projektach, czy poznawać możliwości narzędzi, które dziś mamy do dyspozycji i przekraczać kolejne granice. W tej sytuacji nie ma odpowiedzi na pytanie **która z tych ścieżek jest właściwa**, ponieważ powinno ono brzmieć **"która z tych ścieżek jest właściwa DLA MNIE?"**.
+
+Na koniec podzielę się z Tobą słowami, które kiedyś przeczytałem w książce Lou Gerstnera pt. „Kto powiedział, że słonie nie potrafią tańczyć?”. Towarzyszą mi one od początku mojej przygody z AI i lubię do nich wracać w chwilach takich jak ta.
+
+> Technology has limitations on what it can accomplish.
+> You do not.
+
+I z tymi słowami Cię zostawiam.
+
+---
+
+Podziękowania:
+
+- Jakubowi: za system zadań, fabułę oraz easter-eggi, które balansowały powagę technicznego tonu lekcji
+- Mateuszowi: za wydarzenia, aktywność w sieci, filmy, memy oraz atmosferę
+- Pawłowi Dulakowi: za ekstremalne zaangażowanie w pomoc przy zadaniach
+- Grzegorzowi Cymborskiemu i Grzegorzowi Ćwiklińskiemu: za fenomenalne wsparcie w komentarzach
+- Pawłowi Szczęsnemu, Przemkowi Smyrdek i Inez Okulskiej: za obecność na spotkaniach live i podzielenie się swoimi doświadczeniami
+- Monice Junik, Natalii Smaczna-Fijałkowska, Małgorzacie Piersa, Marcinowi Duszyńskiemu, Mateuszowi Pośpiesznemu, Michałowi Czyżewskiemu: za zorganizowanie spotkań lokalnych.
+- Bartkowi Rycharskiemu: za rozwiązywanie problemów organizacyjnych oraz sprawienie, że AI_devs 4 mogło się wydarzyć
+- Grzegorzowi Rogowi: za wsparcie w obszarze strategii oraz obszarów biznesowych
+- Aleksandrze Wróbel: za poprowadzenie tego projektu od strony organizacyjnej oraz dbanie o tysiące rzeczy, które doprowadziły nas do tego miejsca
+- Katarzynie Ćwiklińskiej: za pilnowanie harmonogramu oraz dbanie o najdrobniejsze szczegóły
+- Dariuszowi Drezno i Annie Piskorz-Nowak: za współpracę z klientami biznesowymi oraz sprowadzenie tu tak wielu zespołów
+- Michałowi Wedlechowiczowi: za fenomenalny key visual i grafiki
+- Krzysztofowi Maksimiuk i Jankowi Dudek: za wsparcie graficzne oraz realizacji wydarzeń live
+- Martynie Musiał: za prowadzenie profili w mediach społecznościowych
+- Julii Smulskiej i Annie Gołębiewskiej: za ogromne wsparcie w trakcie wydarzeń offline
+- Martynie Ruta: za odpowiadanie na ogromną ilość zapytań przez cały czas trwania projektu
+- Katarzynie Wojdyła: za wsparcie wszędzie tam, gdzie tego potrzebowaliśmy
+- Damianowi Tobota: za poprowadzenie płatnych kampanii reklamowych
+- Joannie Wierzbickiej-Glecner: za wsparcie w obszarach administracyjnych oraz odpowiadania na zapytania.
+
+Dziękuję również Tobie!
+
+---
 
 ## Fabuła
 
-![https://vimeo.com/1171792645](https://vimeo.com/1171792645)
+![https://vimeo.com/1179946532](https://vimeo.com/1179946532)
 
 ## Transkrypcja filmu z Fabułą
 
-> Mamy to! Mamy to! Numerze piąty! Mamy to! Transport dotarł do elektrowni, a nasi ludzie zainstalowali wszystko w reaktorze. Jesteśmy gotowi do uruchomienia urządzeń... Yyy... to znaczy... no już PRAWIE jesteśmy gotowi. Wiem, że to zabrzmi dziwnie. Sam, jak to usłyszałem, nie mogłem uwierzyć, ale to nie jest wiedza powszechna. W normalnych warunkach elektrownia atomowa jest zasilana swoją własną energią. Sama produkuje prąd z którego korzystają jej systemy sterowania, komputery i cała aparatura - to logiczne. Tylko jak to się dzieje, że komputery elektrowni, sterowniki rdzeni reaktora i system chłodzący działają jeszcze ZANIM ona zacznie produkować prąd? Sam nie wierzę, że to mówię, ale OK... Elektrownia do działania potrzebuje prądu. No może nie dosłownie do działania, ale na start jak najbardziej. Musimy mieć zasilanie aby uruchomić urządzenia. Nie martw się, nie proszę Cię o pomoc w ciągnięciu kabli. Elektrownia stoi na uzbrojonym gruncie. Prąd jest tutaj dociągnięty tylko... nie płynie. Został odcięty systemowo. Pewnie w ramach oszczędności. Nasi znajomi z centrali mają wtyki w dziale kontroli przesyłu energii w systemie. Zdobyliśmy dostęp do API, które potrafi odpowiednio sterować przełącznikami i w konsekwencji możemy dzięki niemu doprowadzić sobie tutaj prąd. Jestem przekonany, że to wszystko, czego potrzebujemy. Znasz się na programowaniu, więc myślę, że bez problemu sobie z tym poradzisz. Jeśli potrzebujesz więcej szczegółów, przeczytaj notatkę do tego nagrania.
+**Azazel**
 
-## Zadanie
+Numerze piąty!
 
-Masz do rozwiązania puzzle elektryczne na planszy 3x3 - musisz doprowadzić prąd do wszystkich trzech elektrowni (PWR6132PL, PWR1593PL, PWR7264PL), łącząc je odpowiednio ze źródłem zasilania awaryjnego (po lewej na dole). Plansza przedstawia sieć kabli - każde pole zawiera element złącza elektrycznego. Twoim celem jest doprowadzenie prądu do wszystkich elektrowni przez obrócenie odpowiednich pól planszy tak, aby układ kabli odpowiadał podanemu schematowi docelowemu.
+Domyślam się, że gdy odsłuchujesz tę wiadomość, stoisz gdzieś przy jaskini w Grudziądzu, a może nawet jesteś w środku, mając ze sobą przenośną maszynę czasu.
 
-Jedyna dozwolona operacja to obrót wybranego pola o 90 stopni w prawo. Możesz obracać wiele pól, ile chcesz - ale za każdy obrót płacisz jednym zapytaniem do API.
+To już ostatnie zadanie, które dla Ciebie przygotowałem.
 
-**Nazwa zadania: `electricity`**
+Musisz jedynie odbezpieczyć maszynę czasu, ustawić poprawne dane wejściowe zgodnie z tym, co ustaliliśmy, postawić maszynę na ziemi i odsunąć się na bezpieczną odległość.
 
-#### Jak wygląda plansza?
+Potem zobaczysz coś, co zostanie w Twojej pamięci na długo. To tunel czasowy. Musisz w niego wejść.
 
-Aktualny stan planszy pobierasz jako obrazek PNG:
+Spędziliśmy razem wiele czasu i przyznam, że przywiązałem się do Ciebie. Choć nie powinienem tego mówić, czuję strach.
 
-```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png
-```
+Co jeśli się pomyliliśmy? Co jeśli dane zostały wyliczone w nieprawidłowy sposób? A co, jeśli punkt, który znaleźliśmy w czasie, nie był wcale początkiem wszystkiego?
 
-Pola adresujesz w formacie `AxB`, gdzie A to wiersz (1-3, od góry), a B to kolumna (1-3, od lewej):
+Teraz jest już jednak za późno na takie przemyślenia. Musisz wykonać krok, do którego przygotowywaliśmy się od wielu tygodni. Wejdź w tunel.
 
-```
-1x1 | 1x2 | 1x3
-----|-----|----
-2x1 | 2x2 | 2x3
-----|-----|----
-3x1 | 3x2 | 3x3
-```
+Po drugiej stronie, jeśli wszystko poszło zgodnie z naszymi założeniami, powinien już czekać na Ciebie Rafał.
 
-#### Jak wygląda rozwiązanie?
+Powodzenia i mam nadzieję... do zobaczenia.
 
-https://hub.ag3nts.org/i/solved\_electricity.png
+## Zadanie praktyczne
 
-![](https://hub.ag3nts.org/i/solved_electricity.png)
+Musisz uruchomić maszynę czasu i otworzyć tunel czasowy do 12 listopada 2024 roku. To data na dzień przed tym, jak Rafał został znaleziony w jaskini. Nie mamy dostatecznie dużo energii na otworzenie tunelu, więc nasz plan zakłada jeden dodatkowy skok.
 
-#### Jak komunikować się z hubem?
+Przenieś się do 5 listopada 2238 roku. Tam jeden z naszych ludzi wręczy Ci nową paczkę baterii. Po ich wymianie wróć do teraźniejszości (dzisiejsza data) i z tego poziomu otwórz tunel do daty spotkania z Rafałem.
 
-Każde zapytanie to POST na `https://hub.ag3nts.org/verify`:
+Maszyna aby poprawnie działać - i nie zabić Cię przy okazji - potrzebuje zdefiniowania szeregu ustawień. Część z nich wyklikujesz w interfejsie webowym, a część można ustawić jedynie przez API. Tym razem nie tworzymy więc automatu, który wykona wszystko za Ciebie, a asystenta, który będzie Cię instruować, co należy ustawić i w jaki sposób, a następnie zweryfikuje, czy ustawienia są poprawne i podpowie co można zrobić dalej.
+
+**Nazwa zadania:** `timetravel`
+
+**Odpowiedź wysyłasz do:** https://hub.ag3nts.org/verify
+
+**Dokumentacja urządzenia - to bardzo ważne!** https://hub.ag3nts.org/dane/timetravel.md
+
+**Interfejs do sterowania maszyną czasu:** https://hub.ag3nts.org/timetravel\_preview
+
+Pracę zacznij od przeczytania dokumentacji. Znajdziesz tam zasady wyliczania sync ratio, opis przełączników PT-A i PT-B, ograniczenia baterii, wymagania dla flux density, znaczenie internalMode oraz tabelę ochrony PWR zależną od roku. Bez tej dokumentacji daleko nie zajedziesz.
+
+Na początek warto wywołać przez API funkcję help:
 
 ```json
 {
-  "apikey": "tutaj-twój-klucz",
-  "task": "electricity",
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
   "answer": {
-    "rotate": "2x3"
+    "action": "help"
   }
 }
 ```
 
-Jedno zapytanie = jeden obrót jednego pola. Jeśli chcesz obrócić 3 pola, wysyłasz 3 osobne zapytania.
+Przykładowe ustawienie roku przez API wygląda tak:
 
-Gdy plansza osiągnie poprawną konfigurację, hub zwróci flagę `{FLG:...}`.
-
-#### Reset planszy
-
-Jeśli chcesz zacząć od początku, wywołaj GET z parametrem reset:
-
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
+  "answer": {
+    "action": "configure",
+    "param": "year",
+    "value": 1234
+  }
+}
 ```
-https://hub.ag3nts.org/data/tutaj-twój-klucz/electricity.png?reset=1
+
+Tak samo konfigurujesz pozostałe parametry dostępne w API, czyli day, month, syncRatio oraz stabilization.
+
+Przydatne będą też inne podstawowe akcje:
+
+**Pobranie aktualnej konfiguracji**
+
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
+  "answer": {
+    "action": "getConfig"
+  }
+}
 ```
 
-### Co należy zrobić w zadaniu?
+**Reset urządzenia**
 
-1. **Odczytaj aktualny stan** - pobierz obrazek PNG i ustal, jak ułożone są kable na każdym z 9 pól.
-2. **Porównaj ze stanem docelowym** - ustal, które pola różnią się od wyglądu docelowego i ile obrotów (po 90 stopni w prawo) każde z nich potrzebuje.
-3. **Wyślij obroty** - dla każdego pola wymagającego zmiany wyślij odpowiednią liczbę zapytań z polem `rotate`.
-4. **Sprawdź wynik** - jeśli trzeba, pobierz zaktualizowany obrazek i zweryfikuj, czy plansza zgadza się ze schematem.
-5. **Odbierz flagę** - gdy konfiguracja jest poprawna, hub zwraca `{FLG:...}`.
+```json
+{
+  "apikey": "tutaj-twoj-klucz",
+  "task": "timetravel",
+  "answer": {
+    "action": "reset"
+  }
+}
+```
 
-### Wskazówki
+### Co musi robić Twój asystent
 
-- **LLM nie widzi obrazka** - stan planszy to plik PNG, ale agentowi trzeba podać go w takiej formie, żeby mógł nad nim rozumować. Zastanów się: w jaki sposób można opisać wygląd każdego pola słowami lub symbolami? Jak przekazać te informacje modelowi tekstowo, żeby mógł zaplanować obroty? Można próbować wysyłać obrazek bezpośrednio do modelu z możliwościami przetwarzania obrazów (vision), natomiast czy opłaca się to robić w głównej pętli agenta? Warto opisanie obrazka wydelegować do odpowiedniego narzędzia lub subagenta.
-- **Problemy modeli Vision** - nie wszystkie modele vision będą dobrze radziły sobie z tym zadaniem. Przetestuj które modele zwracają najlepsze wyniki. Może warto odpowiednio przygotować obraz zanim zostanie wysłany do modelu? Czy musi być wysłany w całości? Jeden z lepszych modeli do użycia to `google/gemini-3-flash-preview`.
-- **Mechanika obrotów** - każdy obrót to 90 stopni w prawo. Żeby obrócić pole "w lewo" (90 stopni w lewo), wykonaj 3 obroty w prawo. Kable na każdym polu mogą wychodzić przez różną kombinację krawędzi (lewo, prawo, góra, dół) - obrót przesuwa je zgodnie z ruchem wskazówek zegara.
-- **Podejście agentowe** - to zadanie szczególnie dobrze nadaje się do rozwiązania przez agenta z Function Calling. Agent może samodzielnie: odczytać i zinterpretować stan mapy, porównać z celem, wyliczyć potrzebne obroty i wysłać je sekwencyjnie - bez sztywnego kodowania kolejności w kodzie.
-- **Weryfikuj po każdej partii obrotów** - po wykonaniu kilku obrotów możesz pobrać świeży obrazek i sprawdzić, czy aktualny stan zgadza się ze schematem. Błędy w interpretacji obrazu mogą skutkować niepotrzebnymi obrotami lub koniecznością resetu.
+- odczytać z dokumentacji sposób wyliczania syncRatio dla wybranej daty i zaimplementować generator do jego wyliczania
+- po ustawieniu pełnej daty pobierać z API wskazówki dotyczące stabilization i na ich podstawie ustawiać poprawną wartość
+- sprawdzać aktualny stan urządzenia przez getConfig
+- podpowiadać operatorowi, kiedy internalMode przyjął właściwą wartość, bo tego parametru nie da się ustawić ręcznie
+- informować użytkownika, jakie ustawienia w preview trzeba zmienić ręcznie przed kolejnym skokiem
+
+### Co musisz zrobić Ty?
+
+- wykonaj skok do 2238 roku i zdobądź baterie
+- wróć do dzisiejszej daty
+- otwórz portal do 2024 roku
+
+Aby to zrealizować będziesz, musisz przestawiać wartości parametrów PT-A i PT-B w interfejsie, zmieniać wartości suwaka PWR i przełączać stan urządzenia między standby/active.
+
+### O czym musisz pamiętać
+
+- API pozwala konfigurować tylko day, month, year, syncRatio i stabilization
+- PT-A, PT-B i PWR ustawiasz w interfejsie WWW, a nie przez /verify
+- zmiany parametrów przez API są możliwe tylko wtedy, gdy urządzenie jest w trybie standby
+- poprawny skok wymaga flux density = 100%
+- internalMode zmienia się automatycznie co kilka sekund i musi pasować do zakresu docelowego roku
+- jeśli rozładujesz baterię do zera, zostaną Ci tylko akcje help, getConfig i reset
+- tryb tunelu czasowego wymaga jednoczesnego włączenia PT-A i PT-B, ale zużywa więcej energii niż zwykły skok
+
+Najrozsądniejsze rozwiązanie to przygotowanie prostego skryptu CLI, który komunikuje się z /verify, wylicza parametry z dokumentacji, odczytuje odpowiedzi API i wyświetla operatorowi krótkie, konkretne instrukcje typu: co ustawić w preview, na jaki tryb poczekać i kiedy wykonać skok.
+
+Jeśli dobrze połączysz analizę dokumentacji, odczyt stanu z API i współpracę z człowiekiem obsługującym interfejs, Centrala odeśle flagę.
+
+### Wersja dla bardziej ambitnych
+
+Zamiast tworzyć asystenta podpowiadającego agentowi jak skakać w czasie, stwórz automat, który jednocześnie obsługuje frontend i backend. Idealnie byłoby, gdyby to były dwa osobne agenty wymieniające się informacjami za pomocą dowolnego współdzielonego zasobu (baza, pliki, kolejka - co preferujesz).
