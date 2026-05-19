@@ -4,6 +4,10 @@ node_modules/
 # Task data files (large datasets)
 s3e1/sensors_data/
 
+# Course content (not for publication)
+**/lesson_content.md
+**/task.md
+
 # Environment variables (secrets!)
 .env
 .env.local
